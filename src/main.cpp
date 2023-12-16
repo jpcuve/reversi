@@ -27,6 +27,7 @@ LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
         case WM_PAINT: {
             PAINTSTRUCT ps;
             const auto hdc {BeginPaint(hWnd, &ps)};
+            const auto hGreenBrush {CreateSolidBrush(RGB(0, 0x80, 0))};
             RECT r;
             GetClientRect(hWnd, &r);
             const auto w {r.right - r.left};
@@ -35,6 +36,8 @@ LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
             const auto dx {(w - e) / 2};
             const auto dy {(h - e) / 2};
             const auto s {e / pGame->GetSize()};
+            const auto d {s * 9 / 10};
+            SelectObject(hdc, hGreenBrush);
             for (int row {0}; row < pGame->GetSize(); row++) {
                 for (int col {0}; col < pGame->GetSize(); col++) {
                     const auto x {dx + s * col};
@@ -42,6 +45,7 @@ LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
                     Rectangle(hdc, x, y, x + s, y + s);
                 }
             }
+            DeleteObject(hGreenBrush);
             EndPaint(hWnd, &ps);
             break;
         }
