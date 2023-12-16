@@ -1,5 +1,4 @@
 #include <iostream>
-#include <set>
 
 #include "Game.h"
 #include "resource.h"
@@ -21,9 +20,22 @@ LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
             switch(LOWORD(wParam)) {
                 case IDM_FILE_EXIT:
                     PostQuitMessage(0);
-                break;
+                    break;
             }
             break;
+        case WM_PAINT: {
+            PAINTSTRUCT ps;
+            const auto hdc {BeginPaint(hWnd, &ps)};
+            RECT r;
+            GetClientRect(hWnd, &r);
+            MoveToEx(hdc, 0, 0, nullptr);
+            LineTo(hdc, r.right, r.bottom);
+            MoveToEx(hdc, r.right, 0, nullptr);
+            LineTo(hdc, 0, r.bottom);
+            TextOut(hdc, 0, 0, "Hello, Windows!", 15);
+            EndPaint(hWnd, &ps);
+            break;
+        }
         case WM_DPICHANGED: {
             const auto dpiX {LOWORD(wParam)};
             const auto dpiY {HIWORD(wParam)};
