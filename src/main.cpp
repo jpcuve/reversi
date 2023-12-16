@@ -29,11 +29,19 @@ LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
             const auto hdc {BeginPaint(hWnd, &ps)};
             RECT r;
             GetClientRect(hWnd, &r);
-            MoveToEx(hdc, 0, 0, nullptr);
-            LineTo(hdc, r.right, r.bottom);
-            MoveToEx(hdc, r.right, 0, nullptr);
-            LineTo(hdc, 0, r.bottom);
-            TextOut(hdc, 0, 0, "Hello, Windows!", 15);
+            const auto w {r.right - r.left};
+            const auto h {r.bottom - r.top};
+            const auto e {min(w, h)};
+            const auto dx {(w - e) / 2};
+            const auto dy {(h - e) / 2};
+            const auto s {e / pGame->GetSize()};
+            for (int row {0}; row < pGame->GetSize(); row++) {
+                for (int col {0}; col < pGame->GetSize(); col++) {
+                    const auto x {dx + s * col};
+                    const auto y {dy + s * row};
+                    Rectangle(hdc, x, y, x + s, y + s);
+                }
+            }
             EndPaint(hWnd, &ps);
             break;
         }
