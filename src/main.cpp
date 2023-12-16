@@ -43,11 +43,11 @@ LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
                     const auto y {dy + s * row};
                     SelectObject(hdc, hGreenBrush);
                     Rectangle(hdc, x, y, x + s, y + s);
-                    if (pGame->GetToken(col, row) == 'O') {
+                    if (pGame->GetToken({col, row}) == 'O') {
                         SelectObject(hdc, GetStockObject(WHITE_BRUSH));
                         Ellipse(hdc, x + d, y + d, x + s - d, y + s - d);
                     }
-                    if (pGame->GetToken(col, row) == 'X') {
+                    if (pGame->GetToken({col, row}) == 'X') {
                         SelectObject(hdc, GetStockObject(BLACK_BRUSH));
                         Ellipse(hdc, x + d, y + d, x + s - d, y + s - d);
                     }

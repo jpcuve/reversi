@@ -11,8 +11,8 @@ class Game {
 public:
     Game();
     int GetSize() const { return size; }
-    void SetToken(int col, int row, char token){ board[size * row + col] = token;}
-    char GetToken(int col, int row){ return board[size * row + col];}
+    void SetToken(POINT p, char token){ board[size * p.y + p.x] = token;}
+    char GetToken(POINT p){ return board[size * p.y + p.x];}
 private:
     int size {8};
     std::vector<char> board;
