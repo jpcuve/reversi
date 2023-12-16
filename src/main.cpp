@@ -10,16 +10,17 @@ LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
             break;
         }
         case WM_KEYUP:{
-            if (wParam == VK_ESCAPE) PostQuitMessage(0);
+            if (wParam == VK_ESCAPE) DestroyWindow(hWnd);
             break;
         }
         case WM_DESTROY:
+            std::cout << "Destroying window" << std::endl;
             PostQuitMessage(0);
-            break;
+            return 0;
         case WM_COMMAND:
             switch(LOWORD(wParam)) {
                 case IDM_FILE_EXIT:
-                    PostQuitMessage(0);
+                    DestroyWindow(hWnd);
                     break;
             }
             break;
@@ -97,7 +98,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
     MSG msg;
-    while (GetMessage(&msg, hWnd, 0, 0)) {
+    while (GetMessage(&msg, nullptr, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
