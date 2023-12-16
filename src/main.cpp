@@ -3,27 +3,14 @@
 #include "Game.h"
 #include "resource.h"
 
-LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
+LRESULT BoardWindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
     const auto pGame = reinterpret_cast<Game*>(GetWindowLongPtr(hWnd, 0));
     switch(message) {
-        case WM_KEYDOWN:{
+        case WM_CREATE: {
+            const auto pCreateStruct {reinterpret_cast<CREATESTRUCTW*>(lParam)};
+            SetWindowLongPtr(hWnd, 0, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
             break;
         }
-        case WM_KEYUP:{
-            if (wParam == VK_ESCAPE) DestroyWindow(hWnd);
-            break;
-        }
-        case WM_DESTROY:
-            std::cout << "Destroying window" << std::endl;
-            PostQuitMessage(0);
-            return 0;
-        case WM_COMMAND:
-            switch(LOWORD(wParam)) {
-                case IDM_FILE_EXIT:
-                    DestroyWindow(hWnd);
-                    break;
-            }
-            break;
         case WM_PAINT: {
             PAINTSTRUCT ps;
             const auto hdc {BeginPaint(hWnd, &ps)};
@@ -57,6 +44,63 @@ LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
             EndPaint(hWnd, &ps);
             break;
         }
+        default:
+            break;
+    }
+    return DefWindowProcW(hWnd, message, wParam, lParam);
+}
+
+LRESULT ReversiWindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
+    const auto pGame = reinterpret_cast<Game*>(GetWindowLongPtr(hWnd, 0));
+    switch(message) {
+        case WM_CREATE: {
+            const auto pCreateStruct {reinterpret_cast<CREATESTRUCTW*>(lParam)};
+            SetWindowLongPtr(hWnd, 0, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
+            std::cout << "Create main window" << std::endl;
+            auto hBoard {CreateWindowW(
+                L"board",
+                nullptr,
+                WS_CHILD,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                hWnd,
+                reinterpret_cast<HMENU>(1),  // identifier of child window
+                nullptr,
+                pCreateStruct->lpCreateParams)};
+            ShowWindow(hBoard, SW_SHOWNORMAL);
+            std::cout << "Child window created: " << hBoard << std::endl;
+            return 0;
+        }
+        case WM_SIZE: {
+            auto w {LOWORD(lParam)};
+            auto h {HIWORD(lParam)};
+            auto e {min(w, h)};
+            std::cout << "Size main window " << w << " " << h << std::endl;
+            auto hBoard {FindWindowExW(hWnd, nullptr, L"board", nullptr)};
+            if (hBoard ) {
+                std::cout << "Resizing board window" << std::endl;
+                MoveWindow(hBoard, (w - e) / 2, (h - e) / 2, e, e, true);
+            }
+            break;
+        }
+        case WM_KEYUP:{
+            if (wParam == VK_ESCAPE) DestroyWindow(hWnd);
+            break;
+        }
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            return 0;
+        case WM_COMMAND:
+            switch(LOWORD(wParam)) {
+                case IDM_FILE_EXIT:
+                    DestroyWindow(hWnd);
+                    break;
+                default:
+                    break;
+            }
+            break;
         case WM_DPICHANGED: {
             const auto dpiX {LOWORD(wParam)};
             const auto dpiY {HIWORD(wParam)};
@@ -77,12 +121,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     std::cout << "Starting application" << std::endl;
     if (!SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2)) return 0;
 
-    std::cout << "Registering window class" << std::endl;
-    auto pWindowClassName = L"reversi";
-    WNDCLASSEXW wcex {
+    std::cout << "Registering window classes" << std::endl;
+    const WNDCLASSEXW reversiWndClass {
             sizeof(WNDCLASSEXW),
             CS_HREDRAW | CS_VREDRAW,
-            WindowProcW,
+            ReversiWindowProcW,
             0,
             sizeof(void *),
             hInstance,
@@ -90,16 +133,32 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             LoadCursor(nullptr, IDC_ARROW),
             static_cast<HBRUSH>(GetStockObject(LTGRAY_BRUSH)),
             MAKEINTRESOURCEW(IDR_REVERSI_MENU),
-            pWindowClassName,
+            L"reversi",
             nullptr,
     };
-    if (!RegisterClassExW(&wcex)) return 0;
+    if (!RegisterClassExW(&reversiWndClass)) return 0;
+    const WNDCLASSEXW boardWndClass {
+        sizeof(WNDCLASSEXW),
+        0,
+        BoardWindowProcW,
+        0,
+        sizeof(void *),
+        hInstance,
+        nullptr,
+        LoadCursor(nullptr, IDC_HAND),
+        static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)),
+        nullptr,
+        L"board",
+        nullptr,
+    };
+    if (!RegisterClassExW(&boardWndClass)) return 0;
 
     std::cout << "Creating window" << std::endl;
     SIZE screenSize {GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)};
     SIZE windowSize {640, 480};
+    Game game;
     auto hWnd = CreateWindowW(
-            pWindowClassName,
+            L"reversi",
             L"Reversi",
             WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_THICKFRAME,
             (screenSize.cx - windowSize.cx) / 2,
@@ -109,10 +168,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             nullptr,
             nullptr,
             hInstance,
-            nullptr);
+            &game);
     if (!hWnd) return 0;
-    Game game;
-    SetWindowLongPtr(hWnd, 0, reinterpret_cast<LONG_PTR>(&game));
 
     std::cout << "Showing window" << std::endl;
     ShowWindow(hWnd, nCmdShow);
@@ -122,7 +179,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-    std::cout << "Unregistering window class" << std::endl;
-    UnregisterClassW(pWindowClassName, hInstance);
+    std::cout << "Unregistering window classes" << std::endl;
+    UnregisterClassW(boardWndClass.lpszClassName, hInstance);
+    UnregisterClassW(reversiWndClass.lpszClassName, hInstance);
     return static_cast<int>(msg.wParam);
 }
