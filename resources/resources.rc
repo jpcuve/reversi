@@ -5,6 +5,6 @@ IDR_REVERSI_MENU MENUEX
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "E&xit", ID_FILE_EXIT
+        MENUITEM "E&xit", IDM_FILE_EXIT
     END
 END

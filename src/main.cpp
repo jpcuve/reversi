@@ -1,25 +1,28 @@
 #include <iostream>
 #include <set>
+
+#include "Game.h"
 #include "resource.h"
 
-struct WindowData {
-    std::set<WPARAM> keys {};
-};
-
 LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
-    const auto pWindowData = reinterpret_cast<WindowData *>(GetWindowLongPtr(hWnd, 0));
+    const auto pGame = reinterpret_cast<Game*>(GetWindowLongPtr(hWnd, 0));
     switch(message) {
         case WM_KEYDOWN:{
-            pWindowData->keys.insert(wParam);
             break;
         }
         case WM_KEYUP:{
-            pWindowData->keys.erase(wParam);
             if (wParam == VK_ESCAPE) PostQuitMessage(0);
             break;
         }
         case WM_DESTROY:
             PostQuitMessage(0);
+            break;
+        case WM_COMMAND:
+            switch(LOWORD(wParam)) {
+                case IDM_FILE_EXIT:
+                    PostQuitMessage(0);
+                break;
+            }
             break;
         case WM_DPICHANGED: {
             const auto dpiX {LOWORD(wParam)};
@@ -75,20 +78,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             hInstance,
             nullptr);
     if (!hWnd) return 0;
-    WindowData windowData;
-    SetWindowLongPtr(hWnd, 0, reinterpret_cast<LONG_PTR>(&windowData));
+    Game game;
+    SetWindowLongPtr(hWnd, 0, reinterpret_cast<LONG_PTR>(&game));
 
     std::cout << "Showing window" << std::endl;
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
     MSG msg;
-    auto done = false;
-    while (!done) {
-        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-        done = msg.message == WM_QUIT;
+    while (GetMessage(&msg, hWnd, 0, 0)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
     std::cout << "Unregistering window class" << std::endl;
     UnregisterClassW(pWindowClassName, hInstance);

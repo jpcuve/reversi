@@ -7,6 +7,6 @@
 
 #define IDR_REVERSI_MENU 101
 
-#define ID_FILE_EXIT 9001
+#define IDM_FILE_EXIT 9001
 
 #endif //RESOURCE_H
