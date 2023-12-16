@@ -10,8 +10,6 @@
 
 
 #include <Windows.h>
-#include <wrl\client.h>
-#include <stdexcept>
 
 #define REVERSI_PCH_H
 

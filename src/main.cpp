@@ -36,13 +36,21 @@ LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
             const auto dx {(w - e) / 2};
             const auto dy {(h - e) / 2};
             const auto s {e / pGame->GetSize()};
-            const auto d {s * 9 / 10};
-            SelectObject(hdc, hGreenBrush);
+            const auto d {s / 10};
             for (int row {0}; row < pGame->GetSize(); row++) {
                 for (int col {0}; col < pGame->GetSize(); col++) {
                     const auto x {dx + s * col};
                     const auto y {dy + s * row};
+                    SelectObject(hdc, hGreenBrush);
                     Rectangle(hdc, x, y, x + s, y + s);
+                    if (pGame->GetToken(col, row) == 'O') {
+                        SelectObject(hdc, GetStockObject(WHITE_BRUSH));
+                        Ellipse(hdc, x + d, y + d, x + s - d, y + s - d);
+                    }
+                    if (pGame->GetToken(col, row) == 'X') {
+                        SelectObject(hdc, GetStockObject(BLACK_BRUSH));
+                        Ellipse(hdc, x + d, y + d, x + s - d, y + s - d);
+                    }
                 }
             }
             DeleteObject(hGreenBrush);
