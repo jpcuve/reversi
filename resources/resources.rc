@@ -1,0 +1,10 @@
+#include "../src/resource.h"
+
+1 1024 test.txt
+IDR_REVERSI_MENU MENUEX
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit", ID_FILE_EXIT
+    END
+END
