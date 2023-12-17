@@ -30,11 +30,11 @@ LRESULT BoardWindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
                     const auto y {dy + s * row};
                     SelectObject(hdc, hGreenBrush);
                     Rectangle(hdc, x, y, x + s, y + s);
-                    if (pGame->GetToken({col, row}) == 'O') {
+                    if (pGame->GetToken({col, row}) == TOKEN_WHITE) {
                         SelectObject(hdc, GetStockObject(WHITE_BRUSH));
                         Ellipse(hdc, x + d, y + d, x + s - d, y + s - d);
                     }
-                    if (pGame->GetToken({col, row}) == 'X') {
+                    if (pGame->GetToken({col, row}) == TOKEN_BLACK) {
                         SelectObject(hdc, GetStockObject(BLACK_BRUSH));
                         Ellipse(hdc, x + d, y + d, x + s - d, y + s - d);
                     }
@@ -77,12 +77,8 @@ LRESULT ReversiWindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
             auto w {LOWORD(lParam)};
             auto h {HIWORD(lParam)};
             auto e {min(w, h)};
-            std::cout << "Size main window " << w << " " << h << std::endl;
             auto hBoard {FindWindowExW(hWnd, nullptr, L"board", nullptr)};
-            if (hBoard ) {
-                std::cout << "Resizing board window" << std::endl;
-                MoveWindow(hBoard, (w - e) / 2, (h - e) / 2, e, e, true);
-            }
+            if (hBoard) MoveWindow(hBoard, (w - e) / 2, (h - e) / 2, e, e, true);
             break;
         }
         case WM_KEYUP:{
@@ -155,6 +151,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     std::cout << "Creating window" << std::endl;
     Game game {10};
+    auto moves {game.FindPossibleMoves(TOKEN_WHITE)};
     auto hWnd = CreateWindowW(
             L"reversi",
             L"Reversi",

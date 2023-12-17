@@ -4,18 +4,26 @@
 
 #ifndef GAME_H
 #define GAME_H
-#include <vector>
+#include <string>
+#include <set>
+
+#define TOKEN_EMPTY ' '
+#define TOKEN_WHITE 'O'
+#define TOKEN_BLACK 'X'
 
 
 class Game {
 public:
-    Game(int size);
-    int GetSize() const { return size; }
-    void SetToken(POINT p, char token){ board[size * p.y + p.x] = token;}
-    char GetToken(POINT p){ return board[size * p.y + p.x];}
+    Game(long size);
+    long GetSize() const { return size; }
+    long GetOffset(POINT p) const { return size * p.y + p.x;}
+    POINT GetPoint(long offset) const {return {offset % size, offset / size};}
+    void SetToken(POINT p, char token){ board[GetOffset(p)] = token;}
+    char GetToken(POINT p){ return board[GetOffset(p)];}
+    std::set<long> FindPossibleMoves(char token);
 private:
-    int size;
-    std::vector<char> board;
+    long size;
+    std::string board;
 };
 
 
