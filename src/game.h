@@ -9,12 +9,12 @@
 
 class Game {
 public:
-    Game();
+    Game(int size);
     int GetSize() const { return size; }
     void SetToken(POINT p, char token){ board[size * p.y + p.x] = token;}
     char GetToken(POINT p){ return board[size * p.y + p.x];}
 private:
-    int size {8};
+    int size;
     std::vector<char> board;
 };
 

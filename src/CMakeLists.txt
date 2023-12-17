@@ -1,7 +1,7 @@
 add_executable(reversi WIN32
         main.cpp
-        Game.cpp
-        Game.h
+        game.cpp
+        game.h
 )
 
 set_target_properties(reversi PROPERTIES LINK_FLAGS resources/resources.res)

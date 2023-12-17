@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Game.h"
+#include "game.h"
 #include "resource.h"
 
 LRESULT BoardWindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -146,7 +146,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         hInstance,
         nullptr,
         LoadCursor(nullptr, IDC_HAND),
-        static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)),
+        nullptr,
         nullptr,
         L"board",
         nullptr,
@@ -154,9 +154,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     if (!RegisterClassExW(&boardWndClass)) return 0;
 
     std::cout << "Creating window" << std::endl;
-    SIZE screenSize {GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)};
-    SIZE windowSize {640, 480};
-    Game game;
+    Game game {10};
     auto hWnd = CreateWindowW(
             L"reversi",
             L"Reversi",
