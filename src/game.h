@@ -10,6 +10,7 @@
 #define TOKEN_EMPTY ' '
 #define TOKEN_WHITE 'O'
 #define TOKEN_BLACK 'X'
+#define TOKEN_TEST 'T'
 
 
 class Game {

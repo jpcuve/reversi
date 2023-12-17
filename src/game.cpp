@@ -27,6 +27,7 @@ std::set<long> Game::FindPossibleMoves(char token) {
     std::cout << "Possible moves for '" << token << "':" << std::endl;
     for (auto offset: moves){
         auto p {GetPoint(offset)};
+        SetToken(p, TOKEN_TEST);
         std::cout << " (" << p.x << ", " << p.y << ")" << std::endl;
     }
     return moves;

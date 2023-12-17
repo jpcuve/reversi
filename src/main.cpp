@@ -15,6 +15,7 @@ LRESULT BoardWindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
             PAINTSTRUCT ps;
             const auto hdc {BeginPaint(hWnd, &ps)};
             const auto hGreenBrush {CreateSolidBrush(RGB(0, 0x80, 0))};
+            const auto hRedBrush {CreateSolidBrush(RGB(0xFF, 0, 0))};
             RECT r;
             GetClientRect(hWnd, &r);
             const auto w {r.right - r.left};
@@ -30,12 +31,21 @@ LRESULT BoardWindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
                     const auto y {dy + s * row};
                     SelectObject(hdc, hGreenBrush);
                     Rectangle(hdc, x, y, x + s, y + s);
-                    if (pGame->GetToken({col, row}) == TOKEN_WHITE) {
-                        SelectObject(hdc, GetStockObject(WHITE_BRUSH));
-                        Ellipse(hdc, x + d, y + d, x + s - d, y + s - d);
-                    }
-                    if (pGame->GetToken({col, row}) == TOKEN_BLACK) {
-                        SelectObject(hdc, GetStockObject(BLACK_BRUSH));
+                    const auto token {pGame->GetToken({col, row})};
+                    if (token != TOKEN_EMPTY){
+                        switch(token){
+                            case TOKEN_WHITE:
+                                SelectObject(hdc, GetStockObject(WHITE_BRUSH));
+                                break;
+                            case TOKEN_BLACK:
+                                SelectObject(hdc, GetStockObject(BLACK_BRUSH));
+                                break;
+                            case TOKEN_TEST:
+                                SelectObject(hdc, hRedBrush);
+                                break;
+                            default:
+                                break;
+                        }
                         Ellipse(hdc, x + d, y + d, x + s - d, y + s - d);
                     }
                 }
@@ -151,7 +161,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     std::cout << "Creating window" << std::endl;
     Game game {10};
-    auto moves {game.FindPossibleMoves(TOKEN_WHITE)};
+    auto moves {game.FindPossibleMoves(TOKEN_BLACK)};
     auto hWnd = CreateWindowW(
             L"reversi",
             L"Reversi",
