@@ -1,7 +1,3 @@
-//
-// Created by jpcuv on 07-11-23.
-//
-
 #ifndef REVERSI_PCH_H
 
 #include "targetver.h"

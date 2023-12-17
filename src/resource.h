@@ -1,7 +1,3 @@
-//
-// Created by jpcuv on 16-12-23.
-//
-
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
