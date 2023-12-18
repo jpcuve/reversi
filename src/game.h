@@ -16,6 +16,8 @@
 class Game {
 public:
     Game(long size);
+    void Clear(){ board = std::string(size * size, TOKEN_EMPTY);}
+    void Initialize();
     long GetSize() const { return size; }
     long GetOffset(POINT p) const { return size * p.y + p.x;}
     POINT GetPoint(long offset) const {return {offset % size, offset / size};}

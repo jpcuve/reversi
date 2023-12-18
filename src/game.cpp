@@ -6,8 +6,12 @@
 #include "game.h"
 
 Game::Game(long size): size(size), board(size * size, TOKEN_EMPTY) {
+    Initialize();
     SetToken({0, 0}, TOKEN_WHITE);
     SetToken({size - 1, size - 1}, TOKEN_BLACK);
+}
+
+void Game::Initialize() {
     SetToken({size / 2 - 1, size / 2 - 1}, TOKEN_WHITE);
     SetToken({size / 2, size / 2}, TOKEN_WHITE);
     SetToken({size / 2 - 1, size / 2}, TOKEN_BLACK);
@@ -24,12 +28,6 @@ std::set<long> Game::FindPossibleMoves(char token) {
             }
         }
     }
-    std::cout << "Possible moves for '" << token << "':" << std::endl;
-    for (auto offset: moves){
-        auto p {GetPoint(offset)};
-        SetToken(p, TOKEN_TEST);
-        std::cout << " (" << p.x << ", " << p.y << ")" << std::endl;
-    }
     return moves;
 }
 
@@ -42,3 +40,4 @@ std::ostream &operator<<(std::ostream &os, const Game& that) {
     os << '+' << horizontal << '+' << std::endl;
     return os;
 }
+
