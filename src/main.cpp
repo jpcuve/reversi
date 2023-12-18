@@ -162,10 +162,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     std::cout << "Creating window" << std::endl;
     Game game {10};
     auto moves {game.FindPossibleMoves(TOKEN_BLACK)};
-    for (auto offset: moves){
-        auto p {game.GetPoint(offset)};
-        game.SetToken(p, TOKEN_TEST);
-    }
+    for (auto offset: moves) game.SetToken(game.GetPoint(offset), TOKEN_TEST);
     std::cout << game << std::endl;
     auto hWnd = CreateWindowW(
             L"reversi",
