@@ -7,7 +7,7 @@
 #include <string>
 #include <set>
 
-#define TOKEN_EMPTY ' '
+#define TOKEN_EMPTY '.'
 #define TOKEN_WHITE 'O'
 #define TOKEN_BLACK 'X'
 #define TOKEN_TEST 'T'
@@ -22,6 +22,7 @@ public:
     void SetToken(POINT p, char token){ board[GetOffset(p)] = token;}
     char GetToken(POINT p){ return board[GetOffset(p)];}
     std::set<long> FindPossibleMoves(char token);
+    friend std::ostream& operator<<(std::ostream& os, const Game& that);
 private:
     long size;
     std::string board;

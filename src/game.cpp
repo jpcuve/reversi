@@ -32,3 +32,13 @@ std::set<long> Game::FindPossibleMoves(char token) {
     }
     return moves;
 }
+
+std::ostream &operator<<(std::ostream &os, const Game& that) {
+    std::string horizontal (that.size, '-');
+    os << std::endl << '+' << horizontal << '+' << std::endl;
+    for (auto row {0}; row < that.size; row++){
+        os << '|' << that.board.substr(that.size * row, that.size) << '|' << std::endl;
+    }
+    os << '+' << horizontal << '+' << std::endl;
+    return os;
+}
