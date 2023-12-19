@@ -15,15 +15,15 @@
 
 class Game {
 public:
-    Game(long size);
+    explicit Game(long size);
     void Clear(){ board = std::string(size * size, TOKEN_EMPTY);}
     void Initialize();
-    long GetSize() const { return size; }
-    long GetOffset(POINT p) const { return size * p.y + p.x;}
-    POINT GetPoint(long offset) const {return {offset % size, offset / size};}
-    void SetToken(POINT p, char token){ board[GetOffset(p)] = token;}
-    char GetToken(POINT p){ return board[GetOffset(p)];}
-    std::set<long> FindPossibleMoves(char token);
+    [[nodiscard]] long GetSize() const { return size; }
+    [[nodiscard]] long GetOffset(const POINT p) const { return size * p.y + p.x;}
+    [[nodiscard]] POINT GetPoint(const long offset) const { return {offset % size, offset / size};}
+    void SetToken(const POINT p, const char token){ board[GetOffset(p)] = token;}
+    [[nodiscard]] char GetToken(const POINT p) const { return board[GetOffset(p)];}
+    [[nodiscard]] std::set<long> FindPossibleMoves(char token) const;
     friend std::ostream& operator<<(std::ostream& os, const Game& that);
 private:
     long size;
