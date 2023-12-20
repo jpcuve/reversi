@@ -5,6 +5,11 @@
 #include <iostream>
 #include "game.h"
 
+std::ostream &operator<<(std::ostream &os, const Position& that) {
+    os << "(" << that.x << ", " << that.y << ")";
+    return os;
+}
+
 Game::Game(const int size): size(size), board(size * size, TOKEN_EMPTY) {
     Initialize();
 }
