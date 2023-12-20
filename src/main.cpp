@@ -31,8 +31,7 @@ LRESULT BoardWindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
                     const auto y {dy + s * row};
                     SelectObject(hdc, hGreenBrush);
                     Rectangle(hdc, x, y, x + s, y + s);
-                    const auto token {pGame->GetToken({col, row})};
-                    if (token != TOKEN_EMPTY){
+                    if (const auto token {pGame->GetToken({col, row})}; token != TOKEN_EMPTY){
                         switch(token){
                             case TOKEN_WHITE:
                                 SelectObject(hdc, GetStockObject(WHITE_BRUSH));
@@ -67,7 +66,7 @@ LRESULT ReversiWindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
             const auto pCreateStruct {reinterpret_cast<CREATESTRUCTW*>(lParam)};
             SetWindowLongPtr(hWnd, 0, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
             std::cout << "Create main window" << std::endl;
-            auto hBoard {CreateWindowW(
+            const auto hBoard {CreateWindowW(
                 L"board",
                 nullptr,
                 WS_CHILD,
@@ -84,11 +83,11 @@ LRESULT ReversiWindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
             return 0;
         }
         case WM_SIZE: {
-            auto w {LOWORD(lParam)};
-            auto h {HIWORD(lParam)};
-            auto e {min(w, h)};
-            auto hBoard {FindWindowExW(hWnd, nullptr, L"board", nullptr)};
-            if (hBoard) MoveWindow(hBoard, (w - e) / 2, (h - e) / 2, e, e, true);
+            const auto w {LOWORD(lParam)};
+            const auto h {HIWORD(lParam)};
+            const auto e {min(w, h)};
+            if (const auto hBoard {FindWindowExW(hWnd, nullptr, L"board", nullptr)}; hBoard)
+                MoveWindow(hBoard, (w - e) / 2, (h - e) / 2, e, e, true);
             break;
         }
         case WM_KEYUP:{
@@ -161,10 +160,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     std::cout << "Creating window" << std::endl;
     Game game {10};
-    auto moves {game.FindPossibleMoves(TOKEN_BLACK)};
-    for (auto offset: moves) game.SetToken(game.GetPoint(offset), TOKEN_TEST);
+    for (const auto offset: game.FindPossibleMoves(TOKEN_WHITE)) game.SetToken(game.GetPosition(offset), TOKEN_TEST);
     std::cout << game << std::endl;
-    auto hWnd = CreateWindowW(
+    const auto hWnd = CreateWindowW(
             L"reversi",
             L"Reversi",
             WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_THICKFRAME,

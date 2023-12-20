@@ -5,7 +5,7 @@
 #include <iostream>
 #include "game.h"
 
-Game::Game(const long size): size(size), board(size * size, TOKEN_EMPTY) {
+Game::Game(const int size): size(size), board(size * size, TOKEN_EMPTY) {
     Initialize();
     SetToken({0, 0}, TOKEN_WHITE);
     SetToken({size - 1, size - 1}, TOKEN_BLACK);
@@ -18,14 +18,27 @@ void Game::Initialize() {
     SetToken({size / 2, size / 2 - 1}, TOKEN_BLACK);
 }
 
-std::set<long> Game::FindPossibleMoves(const char token) const {
-    std::set<long> moves;
-    for (long row {0}; row < size; row++) for (long col {0}; col < size; col++){
-        if (board[GetOffset({col, row})] == token){
-            for (long j = max(row - 1, 0); j < min(row + 2, size); j++)
-                for (long i = max(col - 1, 0); i < min(col + 2, size); i++)
-                    if (const auto offset {GetOffset({i, j})}; board[offset] == TOKEN_EMPTY)
-                        moves.insert(offset);
+std::set<size_t> Game::FindPossibleMoves(const char token) const {
+    std::set<size_t> moves;
+    for (int row {0}; row < size; row++) for (int col {0}; col < size; col++){
+        if (const Position p{col, row}; board[GetOffset(p)] == token){
+            for (int deltaRow {-1}; deltaRow <= 1; deltaRow++)
+                for (int deltaCol {-1}; deltaCol <= 1; deltaCol++) {
+                    const Position delta {deltaCol, deltaRow};
+                    if (const Position consideredMove {p - delta}; !delta.IsZero() && IsValid(consideredMove) && GetToken(consideredMove) == TOKEN_EMPTY) {
+                        for (Position cur {p + delta}; IsValid(cur); cur += delta) {
+                            std::cout << "(" << cur.x << ", " << cur.y << ")" << std::endl;
+                            const auto currentToken =  GetToken(cur);
+                            if (currentToken == TOKEN_EMPTY) {
+                                break;
+                            }
+                            if ((token == TOKEN_BLACK && currentToken == TOKEN_WHITE) || (token == TOKEN_WHITE && currentToken == TOKEN_BLACK)) {
+                                moves.insert(GetOffset(consideredMove));
+                                break;
+                            }
+                        }
+                    }
+                }
         }
     }
     return moves;
