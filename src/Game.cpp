@@ -14,6 +14,7 @@ void Game::Initialize() {
     SetToken({size_ / 2, size_ / 2}, TOKEN_WHITE);
     SetToken({size_ / 2 - 1, size_ / 2}, TOKEN_BLACK);
     SetToken({size_ / 2, size_ / 2 - 1}, TOKEN_BLACK);
+    SetInfo("Board initialized");
 }
 
 std::set<size_t> Game::FindPossibleMoves(const char token) const {
@@ -40,6 +41,13 @@ std::set<size_t> Game::FindPossibleMoves(const char token) const {
     }
     return moves;
 }
+
+void Game::Notify(UINT message, WPARAM wParam, LPARAM lParam) const {
+    for (const auto window_handle: window_handles) {
+        PostMessage(window_handle, message, wParam, lParam);
+    }
+}
+
 
 std::ostream &operator<<(std::ostream &os, const Game& that) {
     const std::string horizontal (that.size_, '-');
