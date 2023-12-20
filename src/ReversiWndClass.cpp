@@ -35,10 +35,12 @@ ReversiWndClass::~ReversiWndClass() {
 }
 
 LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wParam, LPARAM lParam) {
+    const auto game = reinterpret_cast<Game*>(GetWindowLongPtr(window_handle, 0));
     switch(message) {
         case WM_CREATE: {
             const auto pCreateStruct {reinterpret_cast<CREATESTRUCTW*>(lParam)};
-            SetWindowLongPtr(window_handle, 0, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
+            const auto g = static_cast<Game*>(pCreateStruct->lpCreateParams);
+            SetWindowLongPtr(window_handle, 0, reinterpret_cast<LONG_PTR>(g));
             const auto board_window_handle {CreateWindowW(
                 L"board",
                 nullptr,
@@ -52,6 +54,7 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
                 nullptr,
                 pCreateStruct->lpCreateParams)};
             if (!board_window_handle) throw std::runtime_error("Cannot create board window");
+            g->AddListener(board_window_handle);
             ShowWindow(board_window_handle, SW_SHOWNORMAL);
             const auto message_window_handle {CreateWindowW(
                 L"message",
@@ -66,6 +69,7 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
                 nullptr,
                 pCreateStruct->lpCreateParams)};
             if (!message_window_handle) throw std::runtime_error("Cannot create board window");
+            g->AddListener(message_window_handle);
             ShowWindow(message_window_handle, SW_SHOWNORMAL);
             return 0;
         }
@@ -91,6 +95,9 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
             switch(LOWORD(wParam)) {
                 case IDM_FILE_EXIT:
                     DestroyWindow(window_handle);
+                    break;
+                case IDM_FILE_TEST:
+                    game->SetInfo("Does this really work?");
                     break;
                 default:
                     break;

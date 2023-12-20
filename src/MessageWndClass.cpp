@@ -4,6 +4,7 @@
 
 #include "MessageWndClass.h"
 
+#include <iostream>
 #include <stdexcept>
 
 #include "Game.h"
@@ -33,6 +34,11 @@ MessageWndClass::~MessageWndClass() {
 LRESULT MessageWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wParam, LPARAM lParam) {
     const auto game = reinterpret_cast<Game*>(GetWindowLongPtr(window_handle, 0));
     switch(message) {
+        case WM_INFO_CHANGED: {
+            std::cout << "Info has changed" << std::endl;
+            InvalidateRect(window_handle, nullptr, TRUE);
+            break;
+        }
         case WM_CREATE: {
             const auto pCreateStruct {reinterpret_cast<CREATESTRUCTW*>(lParam)};
             SetWindowLongPtr(window_handle, 0, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));

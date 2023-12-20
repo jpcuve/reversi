@@ -32,6 +32,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             hInstance,
             &game);
     if (!hWnd) return 0;
+    game.AddListener(hWnd);
 
     std::cout << "Showing window" << std::endl;
     ShowWindow(hWnd, nCmdShow);
