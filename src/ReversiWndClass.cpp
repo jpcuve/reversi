@@ -7,7 +7,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "game.h"
+#include "Game.h"
 #include "resource.h"
 
 ReversiWndClass::ReversiWndClass(HINSTANCE instance_handle): instance_handle_(instance_handle) {

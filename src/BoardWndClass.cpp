@@ -6,7 +6,7 @@
 
 #include <stdexcept>
 
-#include "game.h"
+#include "Game.h"
 
 BoardWndClass::BoardWndClass(HINSTANCE instance_handle): instance_handle_(instance_handle){
     const WNDCLASSEXW boardWndClass {
