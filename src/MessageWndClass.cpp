@@ -45,6 +45,25 @@ LRESULT MessageWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
             GetClientRect(window_handle, &r);
             const auto w {static_cast<int>(r.right - r.left)};
             const auto h {static_cast<int>(r.bottom - r.top)};
+            // auto font {static_cast<HFONT>(GetStockObject(SYSTEM_FONT))};
+            auto font { CreateFont(
+                h,
+                0,
+                0,
+                0,
+                FW_DONTCARE,
+                FALSE,
+                FALSE,
+                FALSE,
+                DEFAULT_CHARSET,
+                OUT_OUTLINE_PRECIS,
+                CLIP_DEFAULT_PRECIS,
+                CLEARTYPE_QUALITY,
+                VARIABLE_PITCH,
+                TEXT("Consolas"))};
+            SelectObject(hdc, font);
+            TextOut(hdc, 0, 0, game->GetInfo().c_str(), static_cast<int>(game->GetInfo().size()));
+            DeleteObject(font);
             EndPaint(window_handle, &ps);
             break;
         }
