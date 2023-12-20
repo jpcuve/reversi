@@ -7,8 +7,6 @@
 
 Game::Game(const int size): size(size), board(size * size, TOKEN_EMPTY) {
     Initialize();
-    SetToken({0, 0}, TOKEN_WHITE);
-    SetToken({size - 1, size - 1}, TOKEN_BLACK);
 }
 
 void Game::Initialize() {
@@ -27,7 +25,6 @@ std::set<size_t> Game::FindPossibleMoves(const char token) const {
                     const Position delta {deltaCol, deltaRow};
                     if (const Position consideredMove {p - delta}; !delta.IsZero() && IsValid(consideredMove) && GetToken(consideredMove) == TOKEN_EMPTY) {
                         for (Position cur {p + delta}; IsValid(cur); cur += delta) {
-                            std::cout << "(" << cur.x << ", " << cur.y << ")" << std::endl;
                             const auto currentToken =  GetToken(cur);
                             if (currentToken == TOKEN_EMPTY) {
                                 break;

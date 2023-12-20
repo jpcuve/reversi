@@ -19,6 +19,7 @@ struct Position {
     Position& operator+=(const Position& p) {x += p.x; y += p.y; return *this;}
     [[nodiscard]] bool IsValid(const unsigned int size) const {return x >= 0 && y >= 0 && x < size && y < size;}
     [[nodiscard]] bool IsZero() const { return x == 0 && y == 0;}
+    friend std::ostream& operator<<(std::ostream& os, const Position& p) { os << "(" << p.x << ", " << p.y << ")"; return os;}
     int x {0};
     int y {0};
 };
