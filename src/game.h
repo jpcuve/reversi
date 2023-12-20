@@ -19,7 +19,7 @@ struct Position {
     Position& operator+=(const Position& p) {x += p.x; y += p.y; return *this;}
     [[nodiscard]] bool IsValid(const unsigned int size) const {return x >= 0 && y >= 0 && x < size && y < size;}
     [[nodiscard]] bool IsZero() const { return x == 0 && y == 0;}
-    friend std::ostream& operator<<(std::ostream& os, const Position& p) { os << "(" << p.x << ", " << p.y << ")"; return os;}
+    // friend std::ostream& operator<<(std::ostream& os, const Position& p) { os << "(" << p.x << ", " << p.y << ")"; return os;}
     int x {0};
     int y {0};
 };
@@ -29,7 +29,7 @@ public:
     explicit Game(int size);
     void Clear(){ board = std::string(size * size, TOKEN_EMPTY);}
     void Initialize();
-    [[nodiscard]] unsigned int GetSize() const { return size; }
+    [[nodiscard]] int GetSize() const { return size; }
     [[nodiscard]] size_t GetOffset(const Position& p) const { return size * p.y + p.x;}
     [[nodiscard]] Position GetPosition(const size_t offset) const { return {static_cast<int>(offset % size), static_cast<int>(offset / size)};}
     void SetToken(const Position& p, const char token){ board[GetOffset(p)] = token;}
