@@ -7,7 +7,9 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "BoardWndClass.h"
 #include "Game.h"
+#include "MessageWndClass.h"
 #include "resource.h"
 
 ReversiWndClass::ReversiWndClass(HINSTANCE instance_handle): instance_handle_(instance_handle) {
@@ -51,14 +53,31 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
                 pCreateStruct->lpCreateParams)};
             if (!board_window_handle) throw std::runtime_error("Cannot create board window");
             ShowWindow(board_window_handle, SW_SHOWNORMAL);
+            const auto message_window_handle {CreateWindowW(
+                L"message",
+                nullptr,
+                WS_CHILD,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                window_handle,
+                reinterpret_cast<HMENU>(2),  // identifier of child window
+                nullptr,
+                pCreateStruct->lpCreateParams)};
+            if (!message_window_handle) throw std::runtime_error("Cannot create board window");
+            ShowWindow(message_window_handle, SW_SHOWNORMAL);
             return 0;
         }
         case WM_SIZE: {
             const auto w {LOWORD(lParam)};
             const auto h {HIWORD(lParam)};
-            const auto e {min(w, h)};
-            if (const auto hBoard {FindWindowExW(window_handle, nullptr, L"board", nullptr)}; hBoard)
-                MoveWindow(hBoard, (w - e) / 2, (h - e) / 2, e, e, true);
+            const int ratio {20};
+            const auto e {min(w, h) * (ratio - 1) / ratio};
+            if (const auto hBoard {FindWindowExW(window_handle, nullptr, BoardWndClass::class_name_, nullptr)}; hBoard)
+                MoveWindow(hBoard, (w - e) / 2, 0, e, e, true);
+            if (const auto hMessage {FindWindowExW(window_handle, nullptr, MessageWndClass::class_name_, nullptr)}; hMessage)
+                MoveWindow(hMessage, 0, h * (ratio - 1) / ratio, w, h / ratio, true);
             break;
         }
         case WM_KEYUP:{

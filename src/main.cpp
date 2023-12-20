@@ -2,6 +2,7 @@
 
 #include "BoardWndClass.h"
 #include "Game.h"
+#include "MessageWndClass.h"
 #include "ReversiWndClass.h"
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
@@ -12,6 +13,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     ReversiWndClass reversi_wnd_class{hInstance};
     BoardWndClass board_wnd_class{hInstance};
+    MessageWndClass message_wnd_class{hInstance};
 
     std::cout << "Creating window" << std::endl;
     Game game {10};

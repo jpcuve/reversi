@@ -5,7 +5,6 @@
 #ifndef BOARDWINDOW_H
 #define BOARDWINDOW_H
 
-#include "pch.h"
 class BoardWndClass {
 public:
     explicit BoardWndClass(HINSTANCE instance_handle);

@@ -10,6 +10,8 @@ add_executable(reversi WIN32
         Position.h
         Position.cpp
         Position.cpp
+        MessageWndClass.cpp
+        MessageWndClass.h
 )
 
 set_target_properties(reversi PROPERTIES LINK_FLAGS resources/resources.res)
