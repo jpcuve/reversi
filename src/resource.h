@@ -6,6 +6,4 @@
 #define IDM_FILE_EXIT 9001
 #define IDM_FILE_TEST 9002
 
-#define WM_INFO_CHANGED (WM_USER + 1)
-
 #endif //RESOURCE_H

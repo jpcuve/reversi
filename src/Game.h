@@ -25,7 +25,7 @@ public:
     [[nodiscard]] Position GetPosition(const size_t offset) const { return {static_cast<int>(offset % size_), static_cast<int>(offset / size_)};}
     void SetToken(const Position& p, const char token){ board_[GetOffset(p)] = token;}
     [[nodiscard]] char GetToken(const Position& p) const { return board_[GetOffset(p)];}
-    void SetInfo(const std::string info){ info_ = info; Notify(WM_INFO_CHANGED, 0, 0);}
+    void SetInfo(const std::string info){ info_ = info; Notify(WM_USER, 0, 0);}
     [[nodiscard]] std::string GetInfo() const { return info_;}
     void AddListener(HWND window_handle){ window_handles.insert(window_handle);}
     void RemoveListener(HWND window_handle){ window_handles.erase(window_handle);}

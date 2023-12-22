@@ -34,8 +34,7 @@ MessageWndClass::~MessageWndClass() {
 LRESULT MessageWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wParam, LPARAM lParam) {
     const auto game = reinterpret_cast<Game*>(GetWindowLongPtr(window_handle, 0));
     switch(message) {
-        case WM_INFO_CHANGED: {
-            std::cout << "Info has changed" << std::endl;
+        case WM_USER: {
             InvalidateRect(window_handle, nullptr, TRUE);
             break;
         }
