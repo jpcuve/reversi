@@ -5,7 +5,7 @@
 #ifndef GAME_H
 #define GAME_H
 #include <string>
-#include <set>
+#include <vector>
 
 #include "Position.h"
 
@@ -24,7 +24,7 @@ public:
     [[nodiscard]] char GetToken(const Position& p) const { return board_[GetOffset(p)];}
     void SetInfo(const std::string& info){ info_ = info; }
     [[nodiscard]] std::string& GetInfo() { return info_;}
-    [[nodiscard]] std::set<size_t> FindPossibleMoves(char token) const;
+    [[nodiscard]] std::vector<Game> FindPossibleNextGames(char token) const;
     friend std::ostream& operator<<(std::ostream& os, const Game& that);
 private:
     int size_;

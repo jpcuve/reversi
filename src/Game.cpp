@@ -17,9 +17,9 @@ void Game::Initialize() {
     SetInfo("Board initialized");
 }
 
-std::set<size_t> Game::FindPossibleMoves(const char token) const {
+std::vector<Game> Game::FindPossibleNextGames(const char token) const {
     const auto oppositeToken = token == TOKEN_WHITE ? TOKEN_BLACK : TOKEN_WHITE;
-    std::set<size_t> moves;
+    std::vector<Game> nextGames;
     for (int row {0}; row < size_; row++) for (int col {0}; col < size_; col++){
         if (const Position p{col, row}; GetToken(p) == token){
             for (int deltaRow {-1}; deltaRow <= 1; deltaRow++) for (int deltaCol {-1}; deltaCol <= 1; deltaCol++) {
@@ -31,7 +31,7 @@ std::set<size_t> Game::FindPossibleMoves(const char token) const {
                         const auto currentToken =  GetToken(cur);
                         if (!currentToken) break;
                         if (currentToken == oppositeToken) {
-                            moves.insert(GetOffset(consideredMove));
+                            nextGames.push_back(nextGame);
                             break;
                         }
                         nextGame.SetToken(cur, token);
@@ -40,14 +40,28 @@ std::set<size_t> Game::FindPossibleMoves(const char token) const {
             }
         }
     }
-    return moves;
+    return nextGames;
 }
 
 std::ostream &operator<<(std::ostream &os, const Game& that) {
     const std::string horizontal (that.size_, '-');
     os << std::endl << '+' << horizontal << '+' << std::endl;
     for (auto row {0}; row < that.size_; row++){
-        os << '|' << that.board_.substr(that.size_ * row, that.size_) << '|' << std::endl;
+        os << '|';
+        for (auto col {0}; col < that.size_; col++) {
+            switch(that.GetToken({col, row})) {
+                case TOKEN_BLACK:
+                    std::cout << 'X';
+                break;
+                case TOKEN_WHITE:
+                    std::cout << 'O';
+                break;
+                default:
+                    std::cout << '.';
+                break;
+            }
+        }
+        os  << '|' << std::endl;
     }
     os << '+' << horizontal << '+' << std::endl;
     return os;
