@@ -21,16 +21,17 @@ std::vector<Game> Game::FindPossibleNextGames(const char token) const {
     const auto oppositeToken = token == TOKEN_WHITE ? TOKEN_BLACK : TOKEN_WHITE;
     std::vector<Game> nextGames;
     for (int row {0}; row < size_; row++) for (int col {0}; col < size_; col++){
-        if (const Position p{col, row}; GetToken(p) == token){
+        if (const Position p{col, row}; GetToken(p) == oppositeToken){
             for (int deltaRow {-1}; deltaRow <= 1; deltaRow++) for (int deltaCol {-1}; deltaCol <= 1; deltaCol++) {
                 const Position delta {deltaCol, deltaRow};
                 if (const Position consideredMove {p - delta}; !delta.IsZero() && IsValid(consideredMove) && !GetToken(consideredMove)) {
                     auto nextGame = Game(*this);
-                    nextGame.SetToken(consideredMove, token);
                     for (Position cur {p + delta}; IsValid(cur); cur += delta) {
                         const auto currentToken =  GetToken(cur);
                         if (!currentToken) break;
-                        if (currentToken == oppositeToken) {
+                        if (currentToken == token) {
+                            nextGame.SetToken(consideredMove, token);
+                            nextGame.SetToken(p, token);
                             nextGames.push_back(nextGame);
                             break;
                         }
