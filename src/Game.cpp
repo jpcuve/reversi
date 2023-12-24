@@ -42,13 +42,6 @@ std::set<size_t> Game::FindPossibleMoves(const char token) const {
     return moves;
 }
 
-void Game::Notify(UINT message, WPARAM wParam, LPARAM lParam) const {
-    for (const auto window_handle: window_handles) {
-        PostMessage(window_handle, message, wParam, lParam);
-    }
-}
-
-
 std::ostream &operator<<(std::ostream &os, const Game& that) {
     const std::string horizontal (that.size_, '-');
     os << std::endl << '+' << horizontal << '+' << std::endl;

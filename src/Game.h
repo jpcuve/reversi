@@ -17,7 +17,7 @@
 
 class Game {
 public:
-    explicit Game(int size);
+    explicit Game(int size = 8);
     void Clear(){ board_ = std::string(size_ * size_, TOKEN_EMPTY);}
     void Initialize();
     [[nodiscard]] int GetSize() const { return size_; }
@@ -25,19 +25,15 @@ public:
     [[nodiscard]] Position GetPosition(const size_t offset) const { return {static_cast<int>(offset % size_), static_cast<int>(offset / size_)};}
     void SetToken(const Position& p, const char token){ board_[GetOffset(p)] = token;}
     [[nodiscard]] char GetToken(const Position& p) const { return board_[GetOffset(p)];}
-    void SetInfo(const std::string info){ info_ = info; Notify(WM_USER, 0, 0);}
+    void SetInfo(const std::string info){ info_ = info; }
     [[nodiscard]] std::string GetInfo() const { return info_;}
-    void AddListener(HWND window_handle){ window_handles.insert(window_handle);}
-    void RemoveListener(HWND window_handle){ window_handles.erase(window_handle);}
     [[nodiscard]] std::set<size_t> FindPossibleMoves(char token) const;
     friend std::ostream& operator<<(std::ostream& os, const Game& that);
 private:
     int size_;
     std::string board_;
     std::string info_ {"text"};
-    std::set<HWND> window_handles;
     [[nodiscard]] bool IsValid(const Position& p) const { return p.IsValid(size_);}
-    void Notify(UINT message, WPARAM wParam, LPARAM lParam) const;
 };
 
 

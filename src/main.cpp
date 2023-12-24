@@ -16,7 +16,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     MessageWndClass message_wnd_class{hInstance};
 
     std::cout << "Creating window" << std::endl;
-    Game game {10};
+    Game game;
     for (const auto offset: game.FindPossibleMoves(TOKEN_WHITE)) game.SetToken(game.GetPosition(offset), TOKEN_TEST);
     std::cout << game << std::endl;
     const auto hWnd = CreateWindowW(
@@ -32,7 +32,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             hInstance,
             &game);
     if (!hWnd) return 0;
-    game.AddListener(hWnd);
 
     std::cout << "Showing window" << std::endl;
     ShowWindow(hWnd, nCmdShow);

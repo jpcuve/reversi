@@ -12,6 +12,9 @@
 #include "MessageWndClass.h"
 #include "resource.h"
 
+#define ID_BOARD_WINDOW 1
+#define ID_INFO_WINDOW 2
+
 ReversiWndClass::ReversiWndClass(HINSTANCE instance_handle): instance_handle_(instance_handle) {
     const WNDCLASSEXW reversiWndClass {
         sizeof(WNDCLASSEXW),
@@ -50,11 +53,11 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
                 CW_USEDEFAULT,
                 CW_USEDEFAULT,
                 window_handle,
-                reinterpret_cast<HMENU>(1),  // identifier of child window
+                reinterpret_cast<HMENU>(ID_BOARD_WINDOW),  // identifier of child window
                 nullptr,
                 pCreateStruct->lpCreateParams)};
             if (!board_window_handle) throw std::runtime_error("Cannot create board window");
-            g->AddListener(board_window_handle);
+//            g->AddListener(board_window_handle);
             ShowWindow(board_window_handle, SW_SHOWNORMAL);
             const auto message_window_handle {CreateWindowW(
                 L"message",
@@ -65,11 +68,11 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
                 CW_USEDEFAULT,
                 CW_USEDEFAULT,
                 window_handle,
-                reinterpret_cast<HMENU>(2),  // identifier of child window
+                reinterpret_cast<HMENU>(ID_INFO_WINDOW),  // identifier of child window
                 nullptr,
                 pCreateStruct->lpCreateParams)};
             if (!message_window_handle) throw std::runtime_error("Cannot create board window");
-            g->AddListener(message_window_handle);
+//            g->AddListener(message_window_handle);
             ShowWindow(message_window_handle, SW_SHOWNORMAL);
             return 0;
         }
@@ -98,6 +101,7 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
                     break;
                 case IDM_FILE_TEST:
                     game->SetInfo("Does this really work?");
+                    InvalidateRect(GetDlgItem(window_handle, ID_INFO_WINDOW), nullptr, true);
                     break;
                 default:
                     break;
