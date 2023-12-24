@@ -24,11 +24,13 @@ public:
     [[nodiscard]] char GetToken(const Position& p) const { return board_[GetOffset(p)];}
     void SetInfo(const std::string& info){ info_ = info; }
     [[nodiscard]] std::string& GetInfo() { return info_;}
-    [[nodiscard]] std::vector<Game> FindPossibleNextGames(char token) const;
+    void ComputeFollowers(char token);
+    [[nodiscard]] std::vector<Game>& GetFollowers() { return followers_;}
     friend std::ostream& operator<<(std::ostream& os, const Game& that);
 private:
     int size_;
     std::string board_;
+    std::vector<Game> followers_;
     std::string info_ {"text"};
     [[nodiscard]] bool IsValid(const Position& p) const { return p.IsValid(size_);}
 };

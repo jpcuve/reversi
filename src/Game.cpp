@@ -17,9 +17,9 @@ void Game::Initialize() {
     SetInfo("Board initialized");
 }
 
-std::vector<Game> Game::FindPossibleNextGames(const char token) const {
+void Game::ComputeFollowers(const char token) {
     const auto oppositeToken = token == TOKEN_WHITE ? TOKEN_BLACK : TOKEN_WHITE;
-    std::vector<Game> nextGames;
+    followers_.clear();
     for (int row {0}; row < size_; row++) for (int col {0}; col < size_; col++){
         if (const Position p{col, row}; GetToken(p) == oppositeToken){
             for (int deltaRow {-1}; deltaRow <= 1; deltaRow++) for (int deltaCol {-1}; deltaCol <= 1; deltaCol++) {
@@ -32,7 +32,7 @@ std::vector<Game> Game::FindPossibleNextGames(const char token) const {
                         if (currentToken == token) {
                             nextGame.SetToken(consideredMove, token);
                             nextGame.SetToken(p, token);
-                            nextGames.push_back(nextGame);
+                            followers_.push_back(nextGame);
                             break;
                         }
                         nextGame.SetToken(cur, token);
@@ -41,7 +41,6 @@ std::vector<Game> Game::FindPossibleNextGames(const char token) const {
             }
         }
     }
-    return nextGames;
 }
 
 std::ostream &operator<<(std::ostream &os, const Game& that) {
