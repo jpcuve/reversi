@@ -8,25 +8,22 @@
 #include <set>
 
 #include "Position.h"
-#include "resource.h"
 
-#define TOKEN_EMPTY '.'
 #define TOKEN_WHITE 'O'
 #define TOKEN_BLACK 'X'
-#define TOKEN_TEST 'T'
 
 class Game {
 public:
     explicit Game(int size = 8);
-    void Clear(){ board_ = std::string(size_ * size_, TOKEN_EMPTY);}
+    void Clear(){ board_ = std::string(size_ * size_, 0);}
     void Initialize();
     [[nodiscard]] int GetSize() const { return size_; }
     [[nodiscard]] size_t GetOffset(const Position& p) const { return size_ * p.y + p.x;}
     [[nodiscard]] Position GetPosition(const size_t offset) const { return {static_cast<int>(offset % size_), static_cast<int>(offset / size_)};}
     void SetToken(const Position& p, const char token){ board_[GetOffset(p)] = token;}
     [[nodiscard]] char GetToken(const Position& p) const { return board_[GetOffset(p)];}
-    void SetInfo(const std::string info){ info_ = info; }
-    [[nodiscard]] std::string GetInfo() const { return info_;}
+    void SetInfo(const std::string& info){ info_ = info; }
+    [[nodiscard]] std::string& GetInfo() { return info_;}
     [[nodiscard]] std::set<size_t> FindPossibleMoves(char token) const;
     friend std::ostream& operator<<(std::ostream& os, const Game& that);
 private:

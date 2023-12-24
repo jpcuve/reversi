@@ -58,16 +58,13 @@ LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPara
                     const auto y {dy + s * row};
                     SelectObject(hdc, hGreenBrush);
                     Rectangle(hdc, x, y, x + s, y + s);
-                    if (const auto token {game->GetToken({col, row})}; token != TOKEN_EMPTY){
+                    if (const auto token {game->GetToken({col, row})}; token){
                         switch(token){
                             case TOKEN_WHITE:
                                 SelectObject(hdc, GetStockObject(WHITE_BRUSH));
                                 break;
                             case TOKEN_BLACK:
                                 SelectObject(hdc, GetStockObject(BLACK_BRUSH));
-                                break;
-                            case TOKEN_TEST:
-                                SelectObject(hdc, hRedBrush);
                                 break;
                             default:
                                 break;

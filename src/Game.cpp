@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Game.h"
 
-Game::Game(const int size): size_(size), board_(size * size, TOKEN_EMPTY) {
+Game::Game(const int size): size_(size), board_(size * size, 0) {
     Initialize();
 }
 
@@ -18,25 +18,26 @@ void Game::Initialize() {
 }
 
 std::set<size_t> Game::FindPossibleMoves(const char token) const {
+    const auto oppositeToken = token == TOKEN_WHITE ? TOKEN_BLACK : TOKEN_WHITE;
     std::set<size_t> moves;
     for (int row {0}; row < size_; row++) for (int col {0}; col < size_; col++){
-        if (const Position p{col, row}; board_[GetOffset(p)] == token){
-            for (int deltaRow {-1}; deltaRow <= 1; deltaRow++)
-                for (int deltaCol {-1}; deltaCol <= 1; deltaCol++) {
-                    const Position delta {deltaCol, deltaRow};
-                    if (const Position consideredMove {p - delta}; !delta.IsZero() && IsValid(consideredMove) && GetToken(consideredMove) == TOKEN_EMPTY) {
-                        for (Position cur {p + delta}; IsValid(cur); cur += delta) {
-                            const auto currentToken =  GetToken(cur);
-                            if (currentToken == TOKEN_EMPTY) {
-                                break;
-                            }
-                            if ((token == TOKEN_BLACK && currentToken == TOKEN_WHITE) || (token == TOKEN_WHITE && currentToken == TOKEN_BLACK)) {
-                                moves.insert(GetOffset(consideredMove));
-                                break;
-                            }
+        if (const Position p{col, row}; GetToken(p) == token){
+            for (int deltaRow {-1}; deltaRow <= 1; deltaRow++) for (int deltaCol {-1}; deltaCol <= 1; deltaCol++) {
+                const Position delta {deltaCol, deltaRow};
+                if (const Position consideredMove {p - delta}; !delta.IsZero() && IsValid(consideredMove) && !GetToken(consideredMove)) {
+                    auto nextGame = Game(*this);
+                    nextGame.SetToken(consideredMove, token);
+                    for (Position cur {p + delta}; IsValid(cur); cur += delta) {
+                        const auto currentToken =  GetToken(cur);
+                        if (!currentToken) break;
+                        if (currentToken == oppositeToken) {
+                            moves.insert(GetOffset(consideredMove));
+                            break;
                         }
+                        nextGame.SetToken(cur, token);
                     }
                 }
+            }
         }
     }
     return moves;
