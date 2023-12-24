@@ -42,33 +42,22 @@ LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPara
             PAINTSTRUCT ps;
             const auto hdc {BeginPaint(window_handle, &ps)};
             const auto hGreenBrush {CreateSolidBrush(RGB(0, 0x80, 0))};
-            const auto hRedBrush {CreateSolidBrush(RGB(0xFF, 0, 0))};
             RECT r;
             GetClientRect(window_handle, &r);
             const auto w {static_cast<int>(r.right - r.left)};
             const auto h {static_cast<int>(r.bottom - r.top)};
             const auto e {min(w, h)};
-            const auto dx {(w - e) / 2};
-            const auto dy {(h - e) / 2};
+            const Position delta {(w - e) / 2, (h - e) / 2};
             const auto s {e / game->GetSize()};
             const auto d {s / 10};
             for (int row {0}; row < game->GetSize(); row++) {
                 for (int col {0}; col < game->GetSize(); col++) {
-                    const auto x {dx + s * col};
-                    const auto y {dy + s * row};
+                    const auto x {delta.x + s * col};
+                    const auto y {delta.y + s * row};
                     SelectObject(hdc, hGreenBrush);
                     Rectangle(hdc, x, y, x + s, y + s);
                     if (const auto token {game->GetToken({col, row})}; token){
-                        switch(token){
-                            case TOKEN_WHITE:
-                                SelectObject(hdc, GetStockObject(WHITE_BRUSH));
-                                break;
-                            case TOKEN_BLACK:
-                                SelectObject(hdc, GetStockObject(BLACK_BRUSH));
-                                break;
-                            default:
-                                break;
-                        }
+                        SelectObject(hdc, GetStockObject(token == TOKEN_WHITE ? WHITE_BRUSH : BLACK_BRUSH));
                         Ellipse(hdc, x + d, y + d, x + s - d, y + s - d);
                     }
                 }
