@@ -17,6 +17,7 @@ struct Position {
     bool operator==(const Position& p) const { return x == p.x && y == p.y;}
     [[nodiscard]] bool IsValid(const unsigned int size) const {return x >= 0 && y >= 0 && x < size && y < size;}
     [[nodiscard]] bool IsZero() const { return x == 0 && y == 0;}
+    [[nodiscard]] bool IsNegative() const { return x < 0 && y < 0;}
     friend std::ostream& operator<<(std::ostream& os, const Position& that);
     int x {0};
     int y {0};

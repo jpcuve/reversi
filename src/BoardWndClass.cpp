@@ -33,7 +33,7 @@ BoardWndClass::~BoardWndClass() {
 
 LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wParam, LPARAM lParam) {
     const auto game = reinterpret_cast<Game*>(GetWindowLongPtr(window_handle, 0));
-    static Position mouse;
+    static Position mouse{-1, -1};
     switch(message) {
         case WM_CREATE: {
             const auto pCreateStruct {reinterpret_cast<CREATESTRUCTW*>(lParam)};
@@ -55,12 +55,14 @@ LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPara
             for (int row {0}; row < game->GetSize(); row++) {
                 for (int col {0}; col < game->GetSize(); col++) {
                     const Position p {delta.x + s * col, delta.y + s * row};
-                    if (mouse == p / s && !game->GetToken({col, row})) {
-                        SelectObject(hdc, GetStockObject(LTGRAY_BRUSH));
-                    } else {
-                        SelectObject(hdc, hGreenBrush);
-                    }
+                    SelectObject(hdc, hGreenBrush);
                     Rectangle(hdc, p.x, p.y, p.x + s, p.y + s);
+                    if (mouse == p / s && !game->GetToken({col, row}) && !mouse.IsNegative()) {
+                        SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
+                        SelectObject(hdc, GetStockObject(WHITE_PEN));
+                        Ellipse(hdc, p.x + d, p.y + d, p.x + s - d, p.y + s - d);
+                        SelectObject(hdc, GetStockObject(BLACK_PEN));
+                    }
                     if (const auto token {game->GetToken({col, row})}; token){
                         SelectObject(hdc, GetStockObject(token == TOKEN_WHITE ? WHITE_BRUSH : BLACK_BRUSH));
                         Ellipse(hdc, p.x + d, p.y + d, p.x + s - d, p.y + s - d);
@@ -72,6 +74,15 @@ LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPara
             break;
         }
         case WM_MOUSEMOVE: {
+            if (mouse.IsNegative()) {
+                TRACKMOUSEEVENT event {
+                    sizeof(TRACKMOUSEEVENT),
+                    TME_LEAVE,
+                    window_handle,
+                    0,
+                };
+                TrackMouseEvent(&event);
+            }
             RECT r;
             GetClientRect(window_handle, &r);
             const auto edge {static_cast<int>(r.right) / game->GetSize()};
@@ -85,6 +96,10 @@ LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPara
             mouse = m;
             break;
         }
+        case WM_MOUSELEAVE:
+            InvalidateRect(window_handle, nullptr, true);
+            mouse = {-1, -1};
+        break;
         default:
             break;
     }
