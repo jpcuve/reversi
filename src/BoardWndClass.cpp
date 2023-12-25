@@ -4,6 +4,7 @@
 
 #include "BoardWndClass.h"
 
+#include <iostream>
 #include <stdexcept>
 
 #include "Game.h"
@@ -32,6 +33,7 @@ BoardWndClass::~BoardWndClass() {
 
 LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wParam, LPARAM lParam) {
     const auto game = reinterpret_cast<Game*>(GetWindowLongPtr(window_handle, 0));
+    static Position mouse;
     switch(message) {
         case WM_CREATE: {
             const auto pCreateStruct {reinterpret_cast<CREATESTRUCTW*>(lParam)};
@@ -52,18 +54,37 @@ LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPara
             const auto d {s / 10};
             for (int row {0}; row < game->GetSize(); row++) {
                 for (int col {0}; col < game->GetSize(); col++) {
-                    const auto x {delta.x + s * col};
-                    const auto y {delta.y + s * row};
+                    const Position p {delta.x + s * col, delta.y + s * row};
                     SelectObject(hdc, hGreenBrush);
-                    Rectangle(hdc, x, y, x + s, y + s);
+                    Rectangle(hdc, p.x, p.y, p.x + s, p.y + s);
+                    if (mouse == p / s) {
+                        MoveToEx(hdc, p.x, p.y, nullptr);
+                        LineTo(hdc, p.x + s, p.y + s);
+                        MoveToEx(hdc, p.x + s, p.y, nullptr);
+                        LineTo(hdc, p.x, p.y + s);
+                    }
                     if (const auto token {game->GetToken({col, row})}; token){
                         SelectObject(hdc, GetStockObject(token == TOKEN_WHITE ? WHITE_BRUSH : BLACK_BRUSH));
-                        Ellipse(hdc, x + d, y + d, x + s - d, y + s - d);
+                        Ellipse(hdc, p.x + d, p.y + d, p.x + s - d, p.y + s - d);
                     }
                 }
             }
             DeleteObject(hGreenBrush);
             EndPaint(window_handle, &ps);
+            break;
+        }
+        case WM_MOUSEMOVE: {
+            RECT r;
+            GetClientRect(window_handle, &r);
+            const auto edge {static_cast<int>(r.right) / game->GetSize()};
+            Position m {LOWORD(lParam), HIWORD(lParam)};
+            m = m / edge;
+            r.left = min(mouse.x, m.x) * edge;
+            r.right = (max(mouse.x, m.x) + 1) * edge;
+            r.top = min(mouse.y, m.y) * edge;
+            r.bottom = (max(mouse.y, m.y) + 1) * edge;
+            InvalidateRect(window_handle, &r, true);
+            mouse = m;
             break;
         }
         default:
