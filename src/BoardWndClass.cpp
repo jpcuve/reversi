@@ -55,14 +55,12 @@ LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPara
             for (int row {0}; row < game->GetSize(); row++) {
                 for (int col {0}; col < game->GetSize(); col++) {
                     const Position p {delta.x + s * col, delta.y + s * row};
-                    SelectObject(hdc, hGreenBrush);
-                    Rectangle(hdc, p.x, p.y, p.x + s, p.y + s);
-                    if (mouse == p / s) {
-                        MoveToEx(hdc, p.x, p.y, nullptr);
-                        LineTo(hdc, p.x + s, p.y + s);
-                        MoveToEx(hdc, p.x + s, p.y, nullptr);
-                        LineTo(hdc, p.x, p.y + s);
+                    if (mouse == p / s && !game->GetToken({col, row})) {
+                        SelectObject(hdc, GetStockObject(LTGRAY_BRUSH));
+                    } else {
+                        SelectObject(hdc, hGreenBrush);
                     }
+                    Rectangle(hdc, p.x, p.y, p.x + s, p.y + s);
                     if (const auto token {game->GetToken({col, row})}; token){
                         SelectObject(hdc, GetStockObject(token == TOKEN_WHITE ? WHITE_BRUSH : BLACK_BRUSH));
                         Ellipse(hdc, p.x + d, p.y + d, p.x + s - d, p.y + s - d);
