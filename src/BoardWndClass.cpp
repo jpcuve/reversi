@@ -58,10 +58,15 @@ LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPara
                     SelectObject(hdc, hGreenBrush);
                     Rectangle(hdc, p.x, p.y, p.x + s, p.y + s);
                     if (mouse == p / s && !game->GetToken({col, row}) && !mouse.IsNegative()) {
-                        SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
-                        SelectObject(hdc, GetStockObject(WHITE_PEN));
-                        Ellipse(hdc, p.x + d, p.y + d, p.x + s - d, p.y + s - d);
-                        SelectObject(hdc, GetStockObject(BLACK_PEN));
+                        for (auto& follower: game->GetFollowers()) {
+                            if (follower.GetToken({row, col})) {
+                                SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
+                                SelectObject(hdc, GetStockObject(WHITE_PEN));
+                                Ellipse(hdc, p.x + d, p.y + d, p.x + s - d, p.y + s - d);
+                                SelectObject(hdc, GetStockObject(BLACK_PEN));
+                                break;
+                            }
+                        }
                     }
                     if (const auto token {game->GetToken({col, row})}; token){
                         SelectObject(hdc, GetStockObject(token == TOKEN_WHITE ? WHITE_BRUSH : BLACK_BRUSH));
