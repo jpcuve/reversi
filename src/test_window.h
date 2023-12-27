@@ -13,7 +13,7 @@ public:
     explicit TestWindow(HWND hwnd): window_handle_(hwnd){}
     TestWindow(): window_handle_(nullptr){}
     [[nodiscard]] HWND GetHandle() const { return window_handle_;}
-    void SetInfo(const std::string& s){ info_ = s;}
+    void SetInfo(const std::string& s){ info_ = s; InvalidateRect(window_handle_, nullptr, true);}
     [[nodiscard]] std::string& GetInfo() { return info_;}
 private:
     HWND window_handle_;

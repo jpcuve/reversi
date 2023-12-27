@@ -50,10 +50,6 @@ HWND TestWndClass::AddWindow(HWND parent_window_handle, HMENU identifier) {
 
 LRESULT TestWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wParam, LPARAM lParam) {
     switch(message) {
-        case WM_USER: {
-            InvalidateRect(window_handle, nullptr, TRUE);
-            break;
-        }
         case WM_PAINT: {
             PAINTSTRUCT ps;
             const auto hdc {BeginPaint(window_handle, &ps)};
@@ -84,7 +80,7 @@ LRESULT TestWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wParam
             TextOut(hdc, 0, 1, window.GetInfo().c_str(), static_cast<int>(window.GetInfo().size()));
             DeleteObject(font);
             EndPaint(window_handle, &ps);
-            break;
+            return 0;
         }
         default:
             break;
