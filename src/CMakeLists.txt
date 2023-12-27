@@ -13,6 +13,8 @@ add_executable(reversi WIN32
         MessageWndClass.cpp
         MessageWndClass.h
         main.cpp
+        test_window.cpp
+        test_window.h
 )
 
 set_target_properties(reversi PROPERTIES LINK_FLAGS resources/resources.res)
