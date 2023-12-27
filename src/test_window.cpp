@@ -12,7 +12,7 @@ TestWndClass::TestWndClass(HINSTANCE instance_handle): instance_handle_(instance
         0,
         WindowProc,
         0,
-        sizeof(void *),
+        0,
         instance_handle,
         nullptr,
         LoadCursor(nullptr, IDC_HAND),
@@ -50,6 +50,10 @@ HWND TestWndClass::AddWindow(HWND parent_window_handle, HMENU identifier) {
 
 LRESULT TestWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wParam, LPARAM lParam) {
     switch(message) {
+        case WM_DESTROY: {
+            RemoveWindow(window_handle);
+            break;
+        }
         case WM_PAINT: {
             PAINTSTRUCT ps;
             const auto hdc {BeginPaint(window_handle, &ps)};

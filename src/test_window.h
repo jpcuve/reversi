@@ -17,7 +17,7 @@ public:
     [[nodiscard]] std::string& GetInfo() { return info_;}
 private:
     HWND window_handle_;
-    std::string info_ {"Test window text"};
+    std::string info_ {"Reversi"};
 };
 
 class TestWndClass {
@@ -25,6 +25,7 @@ public:
     explicit TestWndClass(HINSTANCE instance_handle);
     ~TestWndClass();
     static HWND AddWindow(HWND parent_window_handle, HMENU identifier);
+    static void RemoveWindow(HWND window_handle){ windows_.erase(window_handle);}
     static TestWindow& GetWindow(HWND window_handle){ return windows_[window_handle];}
 private:
     static inline LPCWSTR class_name_ {L"test"};
