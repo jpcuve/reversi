@@ -15,8 +15,8 @@ TestWndClass::TestWndClass(HINSTANCE instance_handle): instance_handle_(instance
         0,
         instance_handle,
         nullptr,
-        LoadCursor(nullptr, IDC_HAND),
         nullptr,
+        static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)),
         nullptr,
         class_name_,
         nullptr,
@@ -59,13 +59,12 @@ LRESULT TestWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wParam
             const auto hdc {BeginPaint(window_handle, &ps)};
             RECT r;
             GetClientRect(window_handle, &r);
-            const auto w {static_cast<int>(r.right - r.left)};
-            const auto h {static_cast<int>(r.bottom - r.top)};
+            const SIZE size {static_cast<int>(r.right - r.left), static_cast<int>(r.bottom - r.top)};
             MoveToEx(hdc, 0, 0, nullptr);
-            LineTo(hdc, w, 0);
+            LineTo(hdc, size.cx, 0);
             // auto font {static_cast<HFONT>(GetStockObject(SYSTEM_FONT))};
             auto font { CreateFont(
-                h - 1,
+                size.cy - 1,
                 0,
                 0,
                 0,
