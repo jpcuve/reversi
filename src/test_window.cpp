@@ -43,7 +43,7 @@ HWND TestWndClass::AddWindow(HWND parent_window_handle, HMENU identifier) {
         nullptr
     );
     if (!hwnd) throw std::runtime_error("Cannot create window");
-    const TestWindow test_window;
+    const TestWindow test_window {hwnd};
     windows_[hwnd] = test_window;
     return hwnd;
 }

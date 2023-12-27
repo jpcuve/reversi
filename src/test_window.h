@@ -10,15 +10,19 @@
 
 class TestWindow {
 public:
+    explicit TestWindow(HWND hwnd): window_handle_(hwnd){}
+    TestWindow(): window_handle_(nullptr){}
+    [[nodiscard]] HWND GetHandle() const { return window_handle_;}
     void SetInfo(const std::string& s){ info_ = s;}
     [[nodiscard]] std::string& GetInfo() { return info_;}
 private:
+    HWND window_handle_;
     std::string info_;
 };
 
 class TestWndClass {
 public:
-    [[explicit]] TestWndClass(HINSTANCE instance_handle);
+    explicit TestWndClass(HINSTANCE instance_handle);
     ~TestWndClass();
     static HWND AddWindow(HWND parent_window_handle, HMENU identifier);
     static TestWindow& GetWindow(HWND window_handle){ return windows_[window_handle];}
