@@ -75,7 +75,7 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
             if (!message_window_handle) throw std::runtime_error("Cannot create board window");
 //            g->AddListener(message_window_handle);
             ShowWindow(message_window_handle, SW_SHOWNORMAL);
-            if (!TestWndClass::AddWindow(window_handle, reinterpret_cast<HMENU>(3))) throw std::runtime_error("Cannot create test window");
+            if (!TestWndClass::AddWindow(window_handle, (HMENU) 3)) throw std::runtime_error("Cannot create test window");
             return 0;
         }
         case WM_SIZE: {
