@@ -29,7 +29,7 @@ TestWndClass::~TestWndClass() {
 }
 
 HWND TestWndClass::AddWindow(HWND parent_window_handle, HMENU identifier) {
-    auto hwnd = CreateWindowW(
+    const auto hwnd = CreateWindowW(
         class_name_,
         nullptr,
         WS_CHILD,

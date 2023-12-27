@@ -17,7 +17,7 @@ public:
     [[nodiscard]] std::string& GetInfo() { return info_;}
 private:
     HWND window_handle_;
-    std::string info_;
+    std::string info_ {"Test window text"};
 };
 
 class TestWndClass {

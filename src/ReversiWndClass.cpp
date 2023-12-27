@@ -15,6 +15,7 @@
 
 #define ID_BOARD_WINDOW 1
 #define ID_INFO_WINDOW 2
+#define ID_TEST_WINDOW 3
 
 ReversiWndClass::ReversiWndClass(HINSTANCE instance_handle): instance_handle_(instance_handle) {
     const WNDCLASSEXW reversiWndClass {
@@ -60,6 +61,7 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
             if (!board_window_handle) throw std::runtime_error("Cannot create board window");
 //            g->AddListener(board_window_handle);
             ShowWindow(board_window_handle, SW_SHOWNORMAL);
+            /*
             const auto message_window_handle {CreateWindowW(
                 MessageWndClass::class_name_,
                 nullptr,
@@ -75,7 +77,10 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
             if (!message_window_handle) throw std::runtime_error("Cannot create board window");
 //            g->AddListener(message_window_handle);
             ShowWindow(message_window_handle, SW_SHOWNORMAL);
-            if (!TestWndClass::AddWindow(window_handle, (HMENU) 3)) throw std::runtime_error("Cannot create test window");
+            */
+            const auto test_window_handle = TestWndClass::AddWindow(window_handle, (HMENU) ID_TEST_WINDOW);
+            if (!test_window_handle) throw std::runtime_error("Cannot create test window");
+            ShowWindow(test_window_handle, SW_SHOWNORMAL);
             return 0;
         }
         case WM_SIZE: {
@@ -85,8 +90,11 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
             const auto e {min(w, h) * (ratio - 1) / ratio};
             if (const auto hBoard {FindWindowExW(window_handle, nullptr, BoardWndClass::class_name_, nullptr)}; hBoard)
                 MoveWindow(hBoard, (w - e) / 2, 0, e, e, true);
+            /*
             if (const auto hMessage {FindWindowExW(window_handle, nullptr, MessageWndClass::class_name_, nullptr)}; hMessage)
                 MoveWindow(hMessage, 0, h * (ratio - 1) / ratio, w, h / ratio, true);
+            */
+            MoveWindow(GetDlgItem(window_handle, 3), 0, h * (ratio - 1) / ratio, w, h / ratio, true);
             break;
         }
         case WM_KEYUP:{
@@ -101,10 +109,11 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
                 case IDM_FILE_EXIT:
                     DestroyWindow(window_handle);
                     break;
-                case IDM_FILE_TEST:
-                    game->SetInfo("Does this really work?");
-                    InvalidateRect(GetDlgItem(window_handle, ID_INFO_WINDOW), nullptr, true);
+                case IDM_FILE_TEST: {
+                    auto& test_window = TestWndClass::GetWindow(GetDlgItem(window_handle, ID_TEST_WINDOW));
+                    test_window.SetInfo("This seems to work");
                     break;
+                }
                 default:
                     break;
             }
