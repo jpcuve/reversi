@@ -52,6 +52,13 @@ HWND MainWndClass::AddWindow(HINSTANCE instance_handle, Game* game) {
     if (!hwnd) throw std::runtime_error("Cannot create window");
     const MainWindow main_window {hwnd, game};
     windows_[hwnd] = main_window;
+    const auto board_window_handle = BoardWndClass::AddWindow(hwnd, reinterpret_cast<HMENU>(ID_BOARD_WINDOW), game);
+    if (!board_window_handle) throw std::runtime_error("Cannot create board window");
+    ShowWindow(board_window_handle, SW_SHOWNORMAL);
+    const auto test_window_handle = TestWndClass::AddWindow(hwnd, reinterpret_cast<HMENU>(ID_TEST_WINDOW));
+    if (!test_window_handle) throw std::runtime_error("Cannot create test window");
+    ShowWindow(test_window_handle, SW_SHOWNORMAL);
+
     return hwnd;
 }
 
