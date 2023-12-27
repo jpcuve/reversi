@@ -2,19 +2,15 @@ add_executable(reversi WIN32
         main.cpp
         Game.cpp
         Game.h
-        BoardWndClass.h
-        BoardWndClass.cpp
-        BoardWndClass.cpp
-        ReversiWndClass.h
-        ReversiWndClass.cpp
         Position.h
         Position.cpp
-        Position.cpp
-        MessageWndClass.cpp
-        MessageWndClass.h
         main.cpp
         test_window.cpp
         test_window.h
+        main_window.cpp
+        main_window.h
+        board_window.cpp
+        board_window.h
 )
 
 set_target_properties(reversi PROPERTIES LINK_FLAGS resources/resources.res)

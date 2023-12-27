@@ -1,21 +1,19 @@
 //
-// Created by jpcuv on 20-12-23.
+// Created by jpcuv on 27-12-23.
 //
 
-#include "BoardWndClass.h"
+#include "board_window.h"
 
-#include <iostream>
 #include <stdexcept>
 
-#include "Game.h"
 
-BoardWndClass::BoardWndClass(HINSTANCE instance_handle): instance_handle_(instance_handle){
-    const WNDCLASSEXW boardWndClass {
+BoardWndClass::BoardWndClass(HINSTANCE instance_handle): instance_handle_(instance_handle) {
+    const WNDCLASSEXW wndClass {
         sizeof(WNDCLASSEXW),
         0,
         WindowProc,
         0,
-        sizeof(void *),
+        0,
         instance_handle,
         nullptr,
         LoadCursor(nullptr, IDC_HAND),
@@ -24,22 +22,38 @@ BoardWndClass::BoardWndClass(HINSTANCE instance_handle): instance_handle_(instan
         class_name_,
         nullptr,
     };
-    if (!RegisterClassExW(&boardWndClass)) throw std::runtime_error("Cannot register window class");
+    if (!RegisterClassExW(&wndClass)) throw std::runtime_error("Cannot register window class");
 }
 
 BoardWndClass::~BoardWndClass() {
     UnregisterClassW(class_name_, instance_handle_);
 }
 
+HWND BoardWndClass::AddWindow(HWND parent_window_handle, HMENU identifier, Game* game) {
+    const auto hwnd = CreateWindowW(
+        BoardWndClass::class_name_,
+        nullptr,
+        WS_CHILD,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        parent_window_handle,
+        identifier,  // identifier of child window
+        nullptr,
+        nullptr
+    );
+    if (!hwnd) throw std::runtime_error("Cannot create window");
+    const BoardWindow board_window {hwnd, game};
+    windows_[hwnd] = board_window;
+    return hwnd;
+}
+
 LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wParam, LPARAM lParam) {
-    const auto game = reinterpret_cast<Game*>(GetWindowLongPtr(window_handle, 0));
     static Position mouse{-1, -1};
+    auto& window = windows_[window_handle];
+    auto game = window.GetGame();
     switch(message) {
-        case WM_CREATE: {
-            const auto pCreateStruct {reinterpret_cast<CREATESTRUCTW*>(lParam)};
-            SetWindowLongPtr(window_handle, 0, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
-            break;
-        }
         case WM_PAINT: {
             PAINTSTRUCT ps;
             const auto hdc {BeginPaint(window_handle, &ps)};
@@ -110,4 +124,3 @@ LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPara
     }
     return DefWindowProcW(window_handle, message, wParam, lParam);
 }
-

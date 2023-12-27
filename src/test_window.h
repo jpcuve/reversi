@@ -30,7 +30,7 @@ public:
 private:
     static inline LPCWSTR class_name_ {L"test"};
     static LRESULT WindowProc(HWND window_handle, UINT message, WPARAM wParam, LPARAM lParam);
-    inline static std::pmr::unordered_map<HWND, TestWindow> windows_;
+    inline static std::unordered_map<HWND, TestWindow> windows_;
     HINSTANCE instance_handle_;
 };
 
