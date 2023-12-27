@@ -45,7 +45,7 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
             const auto g = static_cast<Game*>(pCreateStruct->lpCreateParams);
             SetWindowLongPtr(window_handle, 0, reinterpret_cast<LONG_PTR>(g));
             const auto board_window_handle {CreateWindowW(
-                L"board",
+                BoardWndClass::class_name_,
                 nullptr,
                 WS_CHILD,
                 CW_USEDEFAULT,
@@ -60,7 +60,7 @@ LRESULT ReversiWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wPa
 //            g->AddListener(board_window_handle);
             ShowWindow(board_window_handle, SW_SHOWNORMAL);
             const auto message_window_handle {CreateWindowW(
-                L"message",
+                MessageWndClass::class_name_,
                 nullptr,
                 WS_CHILD,
                 CW_USEDEFAULT,
