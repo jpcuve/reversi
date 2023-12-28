@@ -15,9 +15,23 @@ public:
     BoardWindow(): window_handle_(nullptr), game_(nullptr){}
     [[nodiscard]] HWND GetHandle() const { return window_handle_;}
     [[nodiscard]] Game* GetGame() const { return game_;}
+    void SetEdge(const int edge){ edge_ = edge;}
+    [[nodiscard]] int GetEdge() const { return edge_;}
+    void SetOffset(const POINT p){ offset_ = p;}
+    [[nodiscard]] POINT GetOffset() const { return offset_;}
+    void SetMouseTracked(const bool tracked){ mouse_tracked_ = tracked;}
+    [[nodiscard]] bool IsMouseTracked() const { return mouse_tracked_;}
+    void SetMousePosition(const POINT p){ mouse_position_ = p;}
+    [[nodiscard]] POINT GetMousePosition() const { return mouse_position_;}
+    RECT ConvertToWindow(Position p, const Game* game) const;
+    Position ConvertToGame(POINT p, const Game* game) const;
 private:
     HWND window_handle_;
     Game* game_;
+    int edge_ {0};
+    POINT offset_ {0, 0};
+    bool mouse_tracked_ {false};
+    POINT mouse_position_ {0, 0};
 };
 
 class BoardWndClass {

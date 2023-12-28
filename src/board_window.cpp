@@ -7,6 +7,17 @@
 #include <stdexcept>
 
 
+RECT BoardWindow::ConvertToWindow(const Position p, const Game* game) const {
+    const auto tile_edge = edge_ / game->GetSize();
+    const POINT lt {offset_.x + p.x * tile_edge, offset_.y + p.y * tile_edge};
+    return {lt.x, lt.y, lt.x + tile_edge, lt.y + tile_edge};
+}
+
+Position BoardWindow::ConvertToGame(const POINT p, const Game* game) const {
+    const auto tile_edge = edge_ / game->GetSize();
+    return {static_cast<int>(p.x - offset_.x) / tile_edge, static_cast<int>(p.y - offset_.y) / tile_edge };
+}
+
 BoardWndClass::BoardWndClass(HINSTANCE instance_handle): instance_handle_(instance_handle) {
     const WNDCLASSEXW wndClass {
         sizeof(WNDCLASSEXW),
@@ -49,76 +60,72 @@ HWND BoardWndClass::AddWindow(HWND parent_window_handle, HMENU identifier, Game*
     return hwnd;
 }
 
-LRESULT BoardWndClass::WindowProc(HWND window_handle, UINT message, WPARAM wParam, LPARAM lParam) {
-    static Position mouse{-1, -1};
-    auto& window = windows_[window_handle];
-    auto game = window.GetGame();
+LRESULT BoardWndClass::WindowProc(HWND window_handle, const UINT message, const WPARAM wParam, const LPARAM lParam) {
+    auto& board_window = windows_[window_handle];
+    const auto game {board_window.GetGame()};
     switch(message) {
+        case WM_SIZE: {
+            const SIZE size {LOWORD(lParam), HIWORD(lParam)};
+            const auto edge {min(size.cx, size.cy)};
+            board_window.SetEdge(edge);
+            board_window.SetOffset({ (size.cx - edge) / 2, (size.cy - edge) / 2});
+            break;
+        }
         case WM_PAINT: {
             PAINTSTRUCT ps;
+            RECT dummy;
             const auto hdc {BeginPaint(window_handle, &ps)};
             const auto hGreenBrush {CreateSolidBrush(RGB(0, 0x80, 0))};
-            RECT r;
-            GetClientRect(window_handle, &r);
-            const auto w {static_cast<int>(r.right - r.left)};
-            const auto h {static_cast<int>(r.bottom - r.top)};
-            const auto e {min(w, h)};
-            const Position delta {(w - e) / 2, (h - e) / 2};
-            const auto s {e / game->GetSize()};
-            const auto d {s / 10};
-            for (int row {0}; row < game->GetSize(); row++) {
-                for (int col {0}; col < game->GetSize(); col++) {
-                    const Position p {delta.x + s * col, delta.y + s * row};
+            const auto tile_edge {board_window.GetEdge() / game->GetSize()};
+            const auto tile_padding{tile_edge / 10};
+            for (int row {0}; row < game->GetSize(); row++) for (int col {0}; col < game->GetSize(); col++) {
+                const auto r {board_window.ConvertToWindow({col, row}, game)};
+                if (IntersectRect(&dummy, &r, &ps.rcPaint)) {  // only draw if tile is in clipping region
                     SelectObject(hdc, hGreenBrush);
-                    Rectangle(hdc, p.x, p.y, p.x + s, p.y + s);
-                    if (mouse == p / s && !game->GetToken({col, row}) && !mouse.IsNegative()) {
+                    Rectangle(hdc, r.left, r.top, r.right, r.bottom);
+                    if (board_window.IsMouseTracked() && PtInRect(&r, board_window.GetMousePosition()) && !game->GetToken({col, row})) {
                         for (auto& follower: game->GetFollowers()) {
                             if (follower.GetToken({row, col})) {
                                 SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
                                 SelectObject(hdc, GetStockObject(WHITE_PEN));
-                                Ellipse(hdc, p.x + d, p.y + d, p.x + s - d, p.y + s - d);
+                                Ellipse(hdc, r.left + tile_padding, r.top + tile_padding, r.right - tile_padding, r.bottom - tile_padding);
                                 SelectObject(hdc, GetStockObject(BLACK_PEN));
-                                break;
                             }
                         }
                     }
                     if (const auto token {game->GetToken({col, row})}; token){
                         SelectObject(hdc, GetStockObject(token == TOKEN_WHITE ? WHITE_BRUSH : BLACK_BRUSH));
-                        Ellipse(hdc, p.x + d, p.y + d, p.x + s - d, p.y + s - d);
+                        Ellipse(hdc, r.left + tile_padding, r.top + tile_padding, r.right - tile_padding, r.bottom - tile_padding);
                     }
                 }
             }
             DeleteObject(hGreenBrush);
             EndPaint(window_handle, &ps);
-            break;
+            return 0;
         }
         case WM_MOUSEMOVE: {
-            if (mouse.IsNegative()) {
+            if (!board_window.IsMouseTracked()) {
                 TRACKMOUSEEVENT event {
                     sizeof(TRACKMOUSEEVENT),
                     TME_LEAVE,
                     window_handle,
                     0,
                 };
-                TrackMouseEvent(&event);
+                board_window.SetMouseTracked(TrackMouseEvent(&event));
             }
             RECT r;
-            GetClientRect(window_handle, &r);
-            const auto edge {static_cast<int>(r.right) / game->GetSize()};
-            Position m {LOWORD(lParam), HIWORD(lParam)};
-            m = m / edge;
-            r.left = min(mouse.x, m.x) * edge;
-            r.right = (max(mouse.x, m.x) + 1) * edge;
-            r.top = min(mouse.y, m.y) * edge;
-            r.bottom = (max(mouse.y, m.y) + 1) * edge;
+            r = board_window.ConvertToWindow(board_window.ConvertToGame(board_window.GetMousePosition(), game), game);
             InvalidateRect(window_handle, &r, true);
-            mouse = m;
+            board_window.SetMousePosition({LOWORD(lParam), HIWORD(lParam)});
+            r = board_window.ConvertToWindow(board_window.ConvertToGame(board_window.GetMousePosition(), game), game);
+            InvalidateRect(window_handle, &r, true);
             break;
         }
-        case WM_MOUSELEAVE:
+        case WM_MOUSELEAVE: {
+            board_window.SetMouseTracked(false);
             InvalidateRect(window_handle, nullptr, true);
-            mouse = {-1, -1};
-        break;
+            break;
+        }
         default:
             break;
     }
