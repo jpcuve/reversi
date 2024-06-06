@@ -8,14 +8,14 @@
 
 
 RECT BoardWindow::ConvertToWindow(const Position p, const Game* game) const {
-    const auto tile_edge = edge_ / game->GetSize();
-    const POINT lt {offset_.x + p.x * tile_edge, offset_.y + p.y * tile_edge};
+    const auto tile_edge = edge / game->GetSize();
+    const POINT lt {offset.x + p.x * tile_edge, offset.y + p.y * tile_edge};
     return {lt.x, lt.y, lt.x + tile_edge, lt.y + tile_edge};
 }
 
 Position BoardWindow::ConvertToGame(const POINT p, const Game* game) const {
-    const auto tile_edge = edge_ / game->GetSize();
-    return {static_cast<int>(p.x - offset_.x) / tile_edge, static_cast<int>(p.y - offset_.y) / tile_edge };
+    const auto tile_edge = edge / game->GetSize();
+    return {static_cast<int>(p.x - offset.x) / tile_edge, static_cast<int>(p.y - offset.y) / tile_edge };
 }
 
 BoardWndClass::BoardWndClass(HINSTANCE instance_handle): instance_handle_(instance_handle) {
@@ -62,13 +62,12 @@ HWND BoardWndClass::AddWindow(HWND parent_window_handle, HMENU identifier, Game*
 
 LRESULT BoardWndClass::WindowProc(HWND window_handle, const UINT message, const WPARAM wParam, const LPARAM lParam) {
     auto& board_window = windows_[window_handle];
-    const auto game {board_window.GetGame()};
+    const auto game {board_window.game()};
     switch(message) {
         case WM_SIZE: {
             const SIZE size {LOWORD(lParam), HIWORD(lParam)};
-            const auto edge {min(size.cx, size.cy)};
-            board_window.SetEdge(edge);
-            board_window.SetOffset({ (size.cx - edge) / 2, (size.cy - edge) / 2});
+            board_window.edge = {min(size.cx, size.cy)};
+            board_window.offset = { (size.cx - board_window.edge) / 2, (size.cy - board_window.edge) / 2};
             break;
         }
         case WM_PAINT: {
@@ -76,14 +75,14 @@ LRESULT BoardWndClass::WindowProc(HWND window_handle, const UINT message, const 
             RECT dummy;
             const auto hdc {BeginPaint(window_handle, &ps)};
             const auto hGreenBrush {CreateSolidBrush(RGB(0, 0x80, 0))};
-            const auto tile_edge {board_window.GetEdge() / game->GetSize()};
+            const auto tile_edge {board_window.edge / game->GetSize()};
             const auto tile_padding{tile_edge / 10};
             for (int row {0}; row < game->GetSize(); row++) for (int col {0}; col < game->GetSize(); col++) {
                 const auto r {board_window.ConvertToWindow({col, row}, game)};
                 if (IntersectRect(&dummy, &r, &ps.rcPaint)) {  // only draw if tile is in clipping region
                     SelectObject(hdc, hGreenBrush);
                     Rectangle(hdc, r.left, r.top, r.right, r.bottom);
-                    if (board_window.IsMouseTracked() && PtInRect(&r, board_window.GetMousePosition()) && !game->GetToken({col, row})) {
+                    if (board_window.mouse_tracked && PtInRect(&r, board_window.mouse_position) && !game->GetToken({col, row})) {
                         for (auto& follower: game->GetFollowers()) {
                             if (follower.GetToken({row, col})) {
                                 SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
@@ -104,25 +103,25 @@ LRESULT BoardWndClass::WindowProc(HWND window_handle, const UINT message, const 
             return 0;
         }
         case WM_MOUSEMOVE: {
-            if (!board_window.IsMouseTracked()) {
+            if (!board_window.mouse_tracked) {
                 TRACKMOUSEEVENT event {
                     sizeof(TRACKMOUSEEVENT),
                     TME_LEAVE,
                     window_handle,
                     0,
                 };
-                board_window.SetMouseTracked(TrackMouseEvent(&event));
+                board_window.mouse_tracked = TrackMouseEvent(&event);
             }
             RECT r;
-            r = board_window.ConvertToWindow(board_window.ConvertToGame(board_window.GetMousePosition(), game), game);
+            r = board_window.ConvertToWindow(board_window.ConvertToGame(board_window.mouse_position, game), game);
             InvalidateRect(window_handle, &r, true);
-            board_window.SetMousePosition({LOWORD(lParam), HIWORD(lParam)});
-            r = board_window.ConvertToWindow(board_window.ConvertToGame(board_window.GetMousePosition(), game), game);
+            board_window.mouse_position = {LOWORD(lParam), HIWORD(lParam)};
+            r = board_window.ConvertToWindow(board_window.ConvertToGame(board_window.mouse_position, game), game);
             InvalidateRect(window_handle, &r, true);
             break;
         }
         case WM_MOUSELEAVE: {
-            board_window.SetMouseTracked(false);
+            board_window.mouse_tracked = false;
             InvalidateRect(window_handle, nullptr, true);
             break;
         }
