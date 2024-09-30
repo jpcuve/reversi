@@ -7,7 +7,7 @@
 #include "main.h"
 
 
-BoardWindow::BoardWindow(const HWND parent_handle, const HMENU identifier, Game* game): game_(game) {
+BoardWindow::BoardWindow(const HWND parent_handle, const HMENU identifier, Game& game): game_(game) {
     handle_ = CreateWindowW(
         BoardWindow::CLASS_NAME,
         nullptr,
@@ -38,15 +38,15 @@ LRESULT BoardWindow::wnd_proc(UINT message, WPARAM word_param, LPARAM long_param
             RECT dummy;
             const auto hdc {BeginPaint(handle_, &ps)};
             const auto hGreenBrush {CreateSolidBrush(RGB(0, 0x80, 0))};
-            const auto tile_edge {edge_ / game_->GetSize()};
+            const auto tile_edge {edge_ / game_.GetSize()};
             const auto tile_padding{tile_edge / 10};
-            for (int row {0}; row < game_->GetSize(); row++) for (int col {0}; col < game_->GetSize(); col++) {
+            for (int row {0}; row < game_.GetSize(); row++) for (int col {0}; col < game_.GetSize(); col++) {
                 const auto r {convert_to_window({col, row}, game_)};
                 if (IntersectRect(&dummy, &r, &ps.rcPaint)) {  // only draw if tile is in clipping region
                     SelectObject(hdc, hGreenBrush);
                     Rectangle(hdc, r.left, r.top, r.right, r.bottom);
-                    if (mouse_tracked_ && PtInRect(&r, mouse_position_) && !game_->GetToken({col, row})) {
-                        for (auto& follower: game_->GetFollowers()) {
+                    if (mouse_tracked_ && PtInRect(&r, mouse_position_) && !game_.GetToken({col, row})) {
+                        for (auto& follower: game_.GetFollowers()) {
                             if (follower.GetToken({row, col})) {
                                 SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
                                 SelectObject(hdc, GetStockObject(WHITE_PEN));
@@ -55,7 +55,7 @@ LRESULT BoardWindow::wnd_proc(UINT message, WPARAM word_param, LPARAM long_param
                             }
                         }
                     }
-                    if (const auto token {game_->GetToken({col, row})}; token){
+                    if (const auto token {game_.GetToken({col, row})}; token){
                         SelectObject(hdc, GetStockObject(token == TOKEN_WHITE ? WHITE_BRUSH : BLACK_BRUSH));
                         Ellipse(hdc, r.left + tile_padding, r.top + tile_padding, r.right - tile_padding, r.bottom - tile_padding);
                     }
@@ -94,14 +94,14 @@ LRESULT BoardWindow::wnd_proc(UINT message, WPARAM word_param, LPARAM long_param
     return Window::wnd_proc(message, word_param, long_param);
 }
 
-RECT BoardWindow::convert_to_window(const Position p, const Game* game) const {
-    const auto tile_edge = edge_ / game->GetSize();
+RECT BoardWindow::convert_to_window(const Position p, const Game& game) const {
+    const auto tile_edge = edge_ / game.GetSize();
     const POINT lt {offset_.x + p.x * tile_edge, offset_.y + p.y * tile_edge};
     return {lt.x, lt.y, lt.x + tile_edge, lt.y + tile_edge};
 }
 
-Position BoardWindow::convert_to_game(const POINT p, const Game* game) const {
-    const auto tile_edge = edge_ / game->GetSize();
+Position BoardWindow::convert_to_game(const POINT p, const Game& game) const {
+    const auto tile_edge = edge_ / game.GetSize();
     return {static_cast<int>(p.x - offset_.x) / tile_edge, static_cast<int>(p.y - offset_.y) / tile_edge };
 }
 

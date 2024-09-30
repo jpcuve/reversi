@@ -13,12 +13,12 @@ class BoardWindow;
 class TestWindow;
 
 class MainWindow final: public Window {
-    Game* game_;
+    Game& game_;
     std::unique_ptr<BoardWindow> board_window_;
     std::unique_ptr<TestWindow> test_window_;
 public:
     static inline const auto CLASS_NAME = L"MainWindow";
-    MainWindow(HINSTANCE hinstance, Game* game);
+    MainWindow(HINSTANCE hinstance, Game& game);
     LRESULT wnd_proc(UINT message, WPARAM word_param, LPARAM long_param) override;
 };
 

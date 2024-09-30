@@ -12,7 +12,7 @@
 #include "main.h"
 #include "test_window.h"
 
-MainWindow::MainWindow(HINSTANCE hinstance, Game* game): game_(game) {
+MainWindow::MainWindow(HINSTANCE hinstance, Game& game): game_(game) {
     handle_ = CreateWindowW(
         CLASS_NAME,
         L"Reversi",
@@ -27,8 +27,7 @@ MainWindow::MainWindow(HINSTANCE hinstance, Game* game): game_(game) {
         nullptr
     );
     ThrowIfNull(handle_);
-    auto this_ptr = reinterpret_cast<LONG_PTR>(this);
-    SetWindowLongPtr(handle_, 0, this_ptr);
+    SetWindowLongPtr(handle_, 0, reinterpret_cast<LONG_PTR>(this));
     board_window_ = std::make_unique<BoardWindow>(handle_, reinterpret_cast<HMENU>(ID_BOARD_WINDOW), game);
     ShowWindow(board_window_->handle(), SW_SHOWNORMAL);
     test_window_ = std::make_unique<TestWindow>(handle_, reinterpret_cast<HMENU>(ID_TEST_WINDOW));
