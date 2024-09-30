@@ -34,7 +34,7 @@ LRESULT TestWindow::wnd_proc(const UINT message, const WPARAM word_param, const 
         MoveToEx(hdc, 0, 0, nullptr);
         LineTo(hdc, size.cx, 0);
         // auto font {static_cast<HFONT>(GetStockObject(SYSTEM_FONT))};
-        auto font { CreateFont(
+        const auto font { CreateFont(
             size.cy - 1,
             0,
             0,
