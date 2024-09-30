@@ -1,19 +1,76 @@
 #include <iostream>
 
+#include "Window.h"
 #include "board_window.h"
 #include "Game.h"
 #include "main_window.h"
 #include "test_window.h"
+#include "resource.h"
+
+LRESULT WindowProc(HWND hWnd, const UINT message, const WPARAM wParam, const LPARAM lParam) {
+    LONG_PTR window_long_ptr = GetWindowLongPtr(hWnd, 0);
+    if (window_long_ptr) {
+        return ((Window*) window_long_ptr)->wnd_proc(message, wParam, lParam);
+        /*
+        const auto window = reinterpret_cast<Window *>(window_long_ptr);
+        if (window) {
+            return window->wnd_proc(message, wParam, lParam);
+        }
+    */
+    }
+    return DefWindowProc(hWnd, message, wParam, lParam);
+}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
     std::cout << "Starting application" << std::endl;
     if (!SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2)) return 0;
-
-    TestWndClass test_wnd_class {hInstance};
-    MainWndClass main_wnd_class {hInstance};
-    BoardWndClass board_wnd_class {hInstance};
+    const std::vector<WNDCLASSEXW> wndClasses = {
+        {
+            sizeof(WNDCLASSEXW),
+            0,
+            WindowProc,
+            0,
+            sizeof(void *),
+            hInstance,
+            nullptr,
+            nullptr,
+            static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)),
+            nullptr,
+            TestWindow::CLASS_NAME,
+            nullptr,
+        },{
+            sizeof(WNDCLASSEXW),
+            0,
+            WindowProc,
+            0,
+            sizeof(void *),
+            hInstance,
+            nullptr,
+            LoadCursor(nullptr, IDC_HAND),
+            nullptr,
+            nullptr,
+            BoardWindow::CLASS_NAME,
+            nullptr,
+        },{
+            sizeof(WNDCLASSEXW),
+            CS_HREDRAW | CS_VREDRAW,
+            WindowProc,
+            0,
+            sizeof(void *),
+            hInstance,
+            nullptr,
+            LoadCursor(nullptr, IDC_ARROW),
+            static_cast<HBRUSH>(GetStockObject(LTGRAY_BRUSH)),
+            MAKEINTRESOURCEW(IDR_REVERSI_MENU),
+            MainWindow::CLASS_NAME,
+            nullptr,
+        }
+    };
+    for (const auto& wndClass : wndClasses) {
+        if (!RegisterClassExW(&wndClass)) return 0;
+    }
 
     std::cout << "Creating window" << std::endl;
     Game game;
@@ -22,15 +79,42 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     for (const auto& g: game.GetFollowers()) std::cout << g << std::endl;
     game.ComputeFollowers(TOKEN_BLACK);
     for (const auto& g: game.GetFollowers()) std::cout << g << std::endl;
-    const auto main_window_handle { MainWndClass::AddWindow(hInstance, &game)};
+    const MainWindow main_window {hInstance, &game};
 
     std::cout << "Showing window" << std::endl;
-    ShowWindow(main_window_handle, nCmdShow);
-    UpdateWindow(main_window_handle);
+    ShowWindow(main_window.handle(), nCmdShow);
+    UpdateWindow(main_window.handle());
     MSG msg;
     while (GetMessage(&msg, nullptr, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+    for (const auto& wndClass : wndClasses) {
+        UnregisterClassW(wndClass.lpszClassName, hInstance);
+    }
+
     return static_cast<int>(msg.wParam);
 }
+
+void ThrowIfFailed(HRESULT result) {
+    if (result != S_OK && result != S_FALSE) {
+        switch (result) {
+        case E_INVALIDARG: std::cerr << "Invalid arguments or parameters" << std::endl;
+            break;
+        case E_FAIL: std::cerr << "Fail" << std::endl;
+            break;
+        default: std::cerr << "Unrecognized error" << std::endl;
+            break;
+        }
+        throw std::runtime_error("Failed");
+    }
+}
+
+void ThrowIfNull(void* result) {
+    if (!result) throw std::runtime_error("nullptr");
+}
+
+void ThrowIfFalse(bool result) {
+    if (!result) throw std::runtime_error("false");
+}
+

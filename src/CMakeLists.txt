@@ -11,6 +11,9 @@ add_executable(reversi WIN32
         main_window.h
         board_window.cpp
         board_window.h
+        Window.h
+        Window.cpp
+        main.h
 )
 
 set_target_properties(reversi PROPERTIES LINK_FLAGS resources/resources.res)

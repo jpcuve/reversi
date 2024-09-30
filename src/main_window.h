@@ -4,19 +4,25 @@
 
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
-#include <unordered_map>
 
 #include "Game.h"
+#include "Window.h"
 
 
-class MainWindow {
-    HWND window_handle_ {nullptr};
-    Game* game_ {nullptr};
+class BoardWindow;
+class TestWindow;
+
+class MainWindow final: public Window {
+    Game* game_;
+    std::unique_ptr<BoardWindow> board_window_;
+    std::unique_ptr<TestWindow> test_window_;
 public:
-    MainWindow() = default;
-    explicit MainWindow(HWND hwnd, Game* game): window_handle_(hwnd), game_(game){}
+    static inline const auto CLASS_NAME = L"MainWindow";
+    MainWindow(HINSTANCE hinstance, Game* game);
+    LRESULT wnd_proc(UINT message, WPARAM word_param, LPARAM long_param) override;
 };
 
+/*
 class MainWndClass {
     static inline LPCWSTR class_name_ {L"main"};
     static LRESULT WindowProc(HWND window_handle, UINT message, WPARAM wParam, LPARAM lParam);
@@ -29,6 +35,7 @@ public:
     static void RemoveWindow(HWND window_handle){ windows_.erase(window_handle);}
     static MainWindow& GetWindow(HWND window_handle){ return windows_[window_handle];}
 };
+*/
 
 
 
