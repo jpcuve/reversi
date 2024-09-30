@@ -5,12 +5,12 @@ add_executable(reversi WIN32
         Position.h
         Position.cpp
         main.cpp
-        test_window.cpp
-        test_window.h
-        main_window.cpp
-        main_window.h
-        board_window.cpp
-        board_window.h
+        TestWindow.cpp
+        TestWindow.h
+        MainWindow.cpp
+        MainWindow.h
+        BoardWindow.cpp
+        BoardWindow.h
         Window.h
         Window.cpp
         main.h

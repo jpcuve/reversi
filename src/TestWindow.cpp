@@ -2,7 +2,7 @@
 // Created by jpcuv on 27-12-23.
 //
 
-#include "test_window.h"
+#include "TestWindow.h"
 
 #include <stdexcept>
 

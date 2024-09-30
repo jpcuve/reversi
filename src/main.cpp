@@ -1,25 +1,11 @@
 #include <iostream>
 
 #include "Window.h"
-#include "board_window.h"
+#include "BoardWindow.h"
 #include "Game.h"
-#include "main_window.h"
-#include "test_window.h"
+#include "MainWindow.h"
+#include "TestWindow.h"
 #include "resource.h"
-
-LRESULT WindowProc(HWND hWnd, const UINT message, const WPARAM wParam, const LPARAM lParam) {
-    LONG_PTR window_long_ptr = GetWindowLongPtr(hWnd, 0);
-    if (window_long_ptr) {
-        return ((Window*) window_long_ptr)->wnd_proc(message, wParam, lParam);
-        /*
-        const auto window = reinterpret_cast<Window *>(window_long_ptr);
-        if (window) {
-            return window->wnd_proc(message, wParam, lParam);
-        }
-    */
-    }
-    return DefWindowProc(hWnd, message, wParam, lParam);
-}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
     UNREFERENCED_PARAMETER(hPrevInstance);
@@ -30,7 +16,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         {
             sizeof(WNDCLASSEXW),
             0,
-            WindowProc,
+            Window::WindowProc,
             0,
             sizeof(void *),
             hInstance,
@@ -43,7 +29,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         },{
             sizeof(WNDCLASSEXW),
             0,
-            WindowProc,
+            Window::WindowProc,
             0,
             sizeof(void *),
             hInstance,
@@ -56,7 +42,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         },{
             sizeof(WNDCLASSEXW),
             CS_HREDRAW | CS_VREDRAW,
-            WindowProc,
+            Window::WindowProc,
             0,
             sizeof(void *),
             hInstance,

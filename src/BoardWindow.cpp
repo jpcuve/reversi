@@ -2,7 +2,7 @@
 // Created by jpcuv on 27-12-23.
 //
 
-#include "board_window.h"
+#include "BoardWindow.h"
 
 #include "main.h"
 

@@ -2,15 +2,15 @@
 // Created by jpcuv on 27-12-23.
 //
 
-#include "main_window.h"
+#include "MainWindow.h"
 
 #include <iostream>
 
 #include "resource.h"
 
-#include "board_window.h"
+#include "BoardWindow.h"
 #include "main.h"
-#include "test_window.h"
+#include "TestWindow.h"
 
 MainWindow::MainWindow(HINSTANCE hinstance, Game& game): game_(game) {
     handle_ = CreateWindowW(
