@@ -61,10 +61,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     std::cout << "Creating window" << std::endl;
     Game game;
     std::cout << game << std::endl;
-    game.ComputeFollowers(TOKEN_WHITE);
-    for (const auto& g: game.GetFollowers()) std::cout << g << std::endl;
-    game.ComputeFollowers(TOKEN_BLACK);
-    for (const auto& g: game.GetFollowers()) std::cout << g << std::endl;
+    game.compute_followers(TOKEN_WHITE);
+    for (const auto& g: game.followers()) std::cout << g << std::endl;
+    game.compute_followers(TOKEN_BLACK);
+    for (const auto& g: game.followers()) std::cout << g << std::endl;
     const MainWindow main_window {hInstance, game};
 
     std::cout << "Showing window" << std::endl;

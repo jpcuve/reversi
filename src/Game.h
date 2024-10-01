@@ -13,26 +13,22 @@
 #define TOKEN_BLACK 'X'
 
 class Game {
-public:
-    explicit Game(int size = 8);
-    void Clear(){ board_ = std::string(size_ * size_, 0);}
-    void Initialize();
-    [[nodiscard]] int GetSize() const { return size_; }
-    [[nodiscard]] size_t GetOffset(const Position& p) const { return size_ * p.y + p.x;}
-    [[nodiscard]] Position GetPosition(const size_t offset) const { return {static_cast<int>(offset % size_), static_cast<int>(offset / size_)};}
-    void SetToken(const Position& p, const char token){ board_[GetOffset(p)] = token;}
-    [[nodiscard]] char GetToken(const Position& p) const { return board_[GetOffset(p)];}
-    void SetInfo(const std::string& info){ info_ = info; }
-    [[nodiscard]] std::string& GetInfo() { return info_;}
-    void ComputeFollowers(char token);
-    [[nodiscard]] std::vector<Game>& GetFollowers() { return followers_;}
-    friend std::ostream& operator<<(std::ostream& os, const Game& that);
-private:
     int size_;
     std::string board_;
     std::vector<Game> followers_;
-    std::string info_ {"text"};
     [[nodiscard]] bool IsValid(const Position& p) const { return p.IsValid(size_);}
+public:
+    explicit Game(int size = 8);
+    void clear(){ board_ = std::string(size_ * size_, 0);}
+    void initialize();
+    [[nodiscard]] int size() const { return size_; }
+    [[nodiscard]] size_t get_offset(const Position& p) const { return size_ * p.y + p.x;}
+    [[nodiscard]] Position get_position(const size_t offset) const { return {static_cast<int>(offset % size_), static_cast<int>(offset / size_)};}
+    void set_token(const Position& p, const char token){ board_[get_offset(p)] = token;}
+    [[nodiscard]] char get_token(const Position& p) const { return board_[get_offset(p)];}
+    void compute_followers(char token);
+    [[nodiscard]] std::vector<Game>& followers() { return followers_;}
+    friend std::ostream& operator<<(std::ostream& os, const Game& that);
 };
 
 
