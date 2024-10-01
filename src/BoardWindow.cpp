@@ -11,7 +11,7 @@ BoardWindow::BoardWindow(const HWND parent_handle, const HMENU identifier, Game&
     handle_ = CreateWindowW(
         BoardWindow::CLASS_NAME,
         nullptr,
-        WS_CHILD,
+        WS_CHILD | WS_VISIBLE,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         CW_USEDEFAULT,

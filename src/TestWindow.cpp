@@ -10,7 +10,7 @@ TestWindow::TestWindow(const HWND parent_handle, const HMENU identifier) {
     handle_ = CreateWindowW(
         CLASS_NAME,
         nullptr,
-        WS_CHILD,
+        WS_CHILD | WS_VISIBLE,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         CW_USEDEFAULT,

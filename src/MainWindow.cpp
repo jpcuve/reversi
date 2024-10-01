@@ -29,16 +29,14 @@ MainWindow::MainWindow(HINSTANCE hinstance, Game& game): game_(game) {
     ThrowIfNull(handle_);
     SetWindowLongPtr(handle_, 0, reinterpret_cast<LONG_PTR>(this));
     board_window_ = std::make_unique<BoardWindow>(handle_, reinterpret_cast<HMENU>(ID_BOARD_WINDOW), game);
-    ShowWindow(board_window_->handle(), SW_SHOWNORMAL);
     test_window_ = std::make_unique<TestWindow>(handle_, reinterpret_cast<HMENU>(ID_TEST_WINDOW));
-    ShowWindow(test_window_->handle(), SW_SHOWNORMAL);
 }
 
 LRESULT MainWindow::wnd_proc(const UINT message, const WPARAM word_param, const LPARAM long_param) {
     switch(message) {
         case WM_SIZE: {
             const SIZE size {LOWORD(long_param), HIWORD(long_param)};
-            const int ratio {20};
+            constexpr int ratio {20};
             const auto e {min(size.cx, size.cy) * (ratio - 1) / ratio};
             MoveWindow(board_window_->handle(), (size.cx - e) / 2, 0, e, e, true);
             MoveWindow(test_window_->handle(), 0, size.cy * (ratio - 1) / ratio, size.cx, size.cy / ratio, true);
