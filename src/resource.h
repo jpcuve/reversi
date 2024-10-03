@@ -8,5 +8,8 @@
 
 #define IDM_FILE_EXIT 9001
 #define IDM_FILE_TEST 9002
+#define IDM_FILE_NEW 9003
+
+#define WM_SET_TOKEN (WM_USER + 1)
 
 #endif //RESOURCE_H

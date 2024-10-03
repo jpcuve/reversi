@@ -61,8 +61,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     std::cout << "Creating window" << std::endl;
     Game game;
     std::cout << game << std::endl;
+    std::cout << "Next white move" << std::endl;
     game.compute_followers(TOKEN_WHITE);
     for (const auto& g: game.followers()) std::cout << g << std::endl;
+    std::cout << "Next black move" << std::endl;
     game.compute_followers(TOKEN_BLACK);
     for (const auto& g: game.followers()) std::cout << g << std::endl;
     const MainWindow main_window {hInstance, game};

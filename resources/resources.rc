@@ -2,11 +2,13 @@
 
 1 1024 test.txt
 2 ICON reversi.ico
-IDR_REVERSI_MENU MENUEX
+IDR_REVERSI_MENU MENU
 BEGIN
     POPUP "&File"
     BEGIN
         MENUITEM "&Test", IDM_FILE_TEST
+        MENUITEM "&New", IDM_FILE_NEW
+        MENUITEM SEPARATOR
         MENUITEM "E&xit", IDM_FILE_EXIT
     END
 END

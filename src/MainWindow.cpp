@@ -60,6 +60,8 @@ LRESULT MainWindow::wnd_proc(const UINT message, const WPARAM word_param, const 
                     test_window_->set_info("This seems to work");
                     break;
                 }
+                case IDM_FILE_NEW:
+                    game_.initialize();
                 default:
                     break;
             }

@@ -6,26 +6,31 @@
 #define GAME_H
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include "Position.h"
 
-#define TOKEN_WHITE 'O'
-#define TOKEN_BLACK 'X'
+static constexpr char TOKEN_WHITE = 1;
+static constexpr char TOKEN_BLACK = -1;
 
 class Game {
     int size_;
     std::string board_;
     std::vector<Game> followers_;
-    [[nodiscard]] bool IsValid(const Position& p) const { return p.IsValid(size_);}
+    std::unordered_set<HWND> listeners_;
+    [[nodiscard]] bool is_valid(const Position& p) const { return p.is_valid(size_);}
 public:
     explicit Game(int size = 8);
-    void clear(){ board_ = std::string(size_ * size_, 0);}
     void initialize();
     [[nodiscard]] int size() const { return size_; }
     [[nodiscard]] size_t get_offset(const Position& p) const { return size_ * p.y + p.x;}
     [[nodiscard]] Position get_position(const size_t offset) const { return {static_cast<int>(offset % size_), static_cast<int>(offset / size_)};}
-    void set_token(const Position& p, const char token){ board_[get_offset(p)] = token;}
+    void set_token(const Position& p, char token);
     [[nodiscard]] char get_token(const Position& p) const { return board_[get_offset(p)];}
+    void attach(HWND hwnd){ listeners_.insert(hwnd); }
+    void detach(HWND hwnd){ listeners_.erase(hwnd); }
+    [[nodiscard]] bool is_valid_move(const Position& p, char token) const;
+    [[nodiscard]] int capture_count(const Position& p, char token, const Position& dir) const;
     void compute_followers(char token);
     [[nodiscard]] std::vector<Game>& followers() { return followers_;}
     friend std::ostream& operator<<(std::ostream& os, const Game& that);
