@@ -5,6 +5,8 @@
 #include <iostream>
 #include "Game.h"
 
+#include <algorithm>
+
 #include "resource.h"
 
 Game::Game(const int size): size_(size), board_(size * size, 0) {
@@ -39,10 +41,7 @@ void Game::set_token(const Position& p, const char token) {
 }
 
 bool Game::is_valid_move(const Position& p) const {
-    for (const auto& dir: DIRECTIONS) {
-        if (capture_count(p, dir) > 0) return true;
-    }
-    return false;
+    return std::ranges::any_of(DIRECTIONS, [&](const auto& dir) { return capture_count(p, dir) > 0; });
 }
 
 int Game::capture_count(const Position& p, const Position& dir) const {
