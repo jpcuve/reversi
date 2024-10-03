@@ -14,7 +14,7 @@ class BoardWindow final: public Window {
     int edge_ {0};
     POINT offset_ {0, 0};
     bool mouse_tracked_ {false};
-    POINT mouse_position_ {0, 0};
+    Position mouse_position_ {INVALID};
     [[nodiscard]] RECT convert_to_window(Position p) const;
     [[nodiscard]] Position convert_to_game(POINT p) const;
     void invalidate_position(const Position& p) const;

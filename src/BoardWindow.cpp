@@ -54,7 +54,8 @@ LRESULT BoardWindow::wnd_proc(UINT message, WPARAM word_param, LPARAM long_param
                         // only draw if tile is in clipping region
                         SelectObject(hdc, hGreenBrush);
                         Rectangle(hdc, r.left, r.top, r.right, r.bottom);
-                        if (mouse_tracked_ && PtInRect(&r, mouse_position_) && game_.is_valid_move(position, TOKEN_WHITE)) {
+                        if (mouse_tracked_ && position == mouse_position_ && game_.is_valid_move(position)) {
+                            std::cout << "Mouse position: " << mouse_position_ << std::endl;
                             SelectObject(hdc, GetStockObject(NULL_PEN));
                             SelectObject(hdc, GetStockObject(GRAY_BRUSH));
                             Ellipse(hdc, r.left + tile_padding, r.top + tile_padding, r.right - tile_padding,
@@ -74,7 +75,6 @@ LRESULT BoardWindow::wnd_proc(UINT message, WPARAM word_param, LPARAM long_param
         }
     case WM_MOUSEMOVE:
         {
-            std::cout << "Mouse moved" << std::endl;
             if (!mouse_tracked_) {
                 TRACKMOUSEEVENT event{
                     sizeof(TRACKMOUSEEVENT),
@@ -84,22 +84,24 @@ LRESULT BoardWindow::wnd_proc(UINT message, WPARAM word_param, LPARAM long_param
                 };
                 mouse_tracked_ = TrackMouseEvent(&event);
             }
-            invalidate_position(convert_to_game(mouse_position_));
-            mouse_position_ = {LOWORD(long_param), HIWORD(long_param)};
-            invalidate_position(convert_to_game(mouse_position_));
+            if (const auto mouse_position {convert_to_game({LOWORD(long_param), HIWORD(long_param)})}; mouse_position != mouse_position_) {
+                if (mouse_position_.is_valid(game_.size())) invalidate_position(mouse_position_);
+                mouse_position_ = mouse_position;
+                invalidate_position(mouse_position_);
+            }
             break;
         }
     case WM_MOUSELEAVE:
         {
             mouse_tracked_ = false;
-            invalidate_position(convert_to_game(mouse_position_));
+            invalidate_position(mouse_position_);
+            mouse_position_ = INVALID;
             break;
         }
     case WM_SET_TOKEN:
         {
             const auto token{static_cast<char>(word_param)};
             const auto position{game_.get_position(static_cast<size_t>(long_param))};
-            std::cout << "Set token message received: " << token << " " << position << std::endl;
             invalidate_position(position);
         }
     default:

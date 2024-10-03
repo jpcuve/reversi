@@ -16,9 +16,9 @@ static constexpr char TOKEN_BLACK = -1;
 class Game {
     int size_;
     std::string board_;
-    std::vector<Game> followers_;
     std::unordered_set<HWND> listeners_;
     [[nodiscard]] bool is_valid(const Position& p) const { return p.is_valid(size_);}
+    char player_ {TOKEN_WHITE};
 public:
     explicit Game(int size = 8);
     void initialize();
@@ -29,10 +29,8 @@ public:
     [[nodiscard]] char get_token(const Position& p) const { return board_[get_offset(p)];}
     void attach(HWND hwnd){ listeners_.insert(hwnd); }
     void detach(HWND hwnd){ listeners_.erase(hwnd); }
-    [[nodiscard]] bool is_valid_move(const Position& p, char token) const;
-    [[nodiscard]] int capture_count(const Position& p, char token, const Position& dir) const;
-    void compute_followers(char token);
-    [[nodiscard]] std::vector<Game>& followers() { return followers_;}
+    [[nodiscard]] bool is_valid_move(const Position& p) const;
+    [[nodiscard]] int capture_count(const Position& p, const Position& dir) const;
     friend std::ostream& operator<<(std::ostream& os, const Game& that);
 };
 
