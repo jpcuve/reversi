@@ -73,6 +73,10 @@ LRESULT BoardWindow::wnd_proc(UINT message, WPARAM word_param, LPARAM long_param
             EndPaint(handle_, &ps);
             return 0;
         }
+    case WM_LBUTTONUP:
+        {
+            game_.play(mouse_position_);
+        }
     case WM_MOUSEMOVE:
         {
             if (!mouse_tracked_) {

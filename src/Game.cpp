@@ -18,6 +18,21 @@ void Game::initialize() {
     set_token({size_ / 2, size_ / 2 - 1}, TOKEN_BLACK);
 }
 
+void Game::play(const Position& p) {
+    if (is_valid_move(p)) {
+        set_token(p, player_);
+        for (const auto& dir: DIRECTIONS) {
+            const auto count = capture_count(p, dir);
+            auto turn {p + dir};
+            for (int i = 0; i < count; i++) {
+                set_token(turn, player_);
+                turn += dir;
+            }
+        }
+        player_ = player_ == TOKEN_WHITE ? TOKEN_BLACK : TOKEN_WHITE;
+    }
+}
+
 void Game::set_token(const Position& p, const char token) {
     board_[get_offset(p)] = token;
     for (const auto& hwnd: listeners_) PostMessage(hwnd, WM_SET_TOKEN, static_cast<WPARAM>(token), static_cast<LPARAM>(get_offset(p)));

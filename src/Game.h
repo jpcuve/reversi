@@ -5,7 +5,6 @@
 #ifndef GAME_H
 #define GAME_H
 #include <string>
-#include <vector>
 #include <unordered_set>
 
 #include "Position.h"
@@ -22,6 +21,7 @@ class Game {
 public:
     explicit Game(int size = 8);
     void initialize();
+    void play(const Position& p);
     [[nodiscard]] int size() const { return size_; }
     [[nodiscard]] size_t get_offset(const Position& p) const { return size_ * p.y + p.x;}
     [[nodiscard]] Position get_position(const size_t offset) const { return {static_cast<int>(offset % size_), static_cast<int>(offset / size_)};}
