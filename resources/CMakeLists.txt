@@ -5,6 +5,6 @@ find_program(RC rc DOC "resource compiler")
 add_custom_command(
         OUTPUT resources.res
         COMMAND ${RC} -fo resources.res ${CMAKE_CURRENT_SOURCE_DIR}/resources.rc
-        DEPENDS resources.rc test.txt
+        DEPENDS resources.rc test.txt reversi.ico
 )
 

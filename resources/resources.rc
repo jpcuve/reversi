@@ -1,6 +1,7 @@
 #include "../src/resource.h"
 
 1 1024 test.txt
+2 ICON reversi.ico
 IDR_REVERSI_MENU MENUEX
 BEGIN
     POPUP "&File"

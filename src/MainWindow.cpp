@@ -13,14 +13,16 @@
 #include "TestWindow.h"
 
 MainWindow::MainWindow(HINSTANCE hinstance, Game& game): game_(game) {
+    const SIZE screen_size {GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)};
+    const auto edge = min(screen_size.cx, screen_size.cy) / 2;
     handle_ = CreateWindowW(
         CLASS_NAME,
         L"Reversi",
         WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_THICKFRAME,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
+        edge,
+        edge,
         nullptr,
         nullptr,
         hinstance,

@@ -39,7 +39,7 @@ LRESULT TestWindow::wnd_proc(const UINT message, const WPARAM word_param, const 
             0,
             0,
             0,
-            FW_DONTCARE,
+            FW_BOLD,
             FALSE,
             FALSE,
             FALSE,
@@ -48,7 +48,7 @@ LRESULT TestWindow::wnd_proc(const UINT message, const WPARAM word_param, const 
             CLIP_DEFAULT_PRECIS,
             CLEARTYPE_QUALITY,
             VARIABLE_PITCH,
-            TEXT("Consolas"))};
+            TEXT("Arial"))};
         SelectObject(hdc, font);
         TextOut(hdc, 0, 1, info_.c_str(), static_cast<int>(info_.size()));
         DeleteObject(font);

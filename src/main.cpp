@@ -16,7 +16,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         {
             sizeof(WNDCLASSEXW),
             0,
-            Window::WindowProc,
+            Window::WindowProcW,
             0,
             sizeof(void *),
             hInstance,
@@ -29,7 +29,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         },{
             sizeof(WNDCLASSEXW),
             0,
-            Window::WindowProc,
+            Window::WindowProcW,
             0,
             sizeof(void *),
             hInstance,
@@ -42,11 +42,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         },{
             sizeof(WNDCLASSEXW),
             CS_HREDRAW | CS_VREDRAW,
-            Window::WindowProc,
+            Window::WindowProcW,
             0,
             sizeof(void *),
             hInstance,
-            nullptr,
+            LoadIcon(hInstance, MAKEINTRESOURCE(2)),
             LoadCursor(nullptr, IDC_ARROW),
             static_cast<HBRUSH>(GetStockObject(LTGRAY_BRUSH)),
             MAKEINTRESOURCEW(IDR_REVERSI_MENU),

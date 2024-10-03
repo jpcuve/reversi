@@ -9,9 +9,9 @@ class Window {
 protected:
   HWND handle_ {nullptr};
 public:
-  static LRESULT WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+  static LRESULT WindowProcW(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
   virtual ~Window() = default;
-  virtual LRESULT wnd_proc(const UINT message, const WPARAM word_param, const LPARAM long_param) { return DefWindowProc(handle_, message, word_param, long_param); }
+  virtual LRESULT wnd_proc(const UINT message, const WPARAM word_param, const LPARAM long_param) { return DefWindowProcW(handle_, message, word_param, long_param); }
   [[nodiscard]] HWND handle() const { return handle_; }
 };
 
