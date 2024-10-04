@@ -30,8 +30,10 @@ public:
     [[nodiscard]] char get_token(const Position& p) const { return board_[get_offset(p)];}
     void attach(HWND hwnd){ listeners_.insert(hwnd); }
     void detach(HWND hwnd){ listeners_.erase(hwnd); }
-    [[nodiscard]] bool is_valid_move(const Position& p) const;
-    [[nodiscard]] int capture_count(const Position& p, const Position& dir) const;
+    [[nodiscard]] bool is_valid_move(const Position& p, char token) const;
+    [[nodiscard]] bool is_valid_move(const Position& p) const { return is_valid_move(p, player_);}
+    [[nodiscard]] int capture_count(const Position& p, char token, const Position& dir) const;
+    [[nodiscard]] int capture_count(const Position& p, const Position& dir) const { return capture_count(p, player_, dir);}
     [[nodiscard]] std::string& get_status();
     friend std::ostream& operator<<(std::ostream& os, const Game& that);
 };

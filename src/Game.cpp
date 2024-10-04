@@ -38,16 +38,16 @@ void Game::set_token(const Position& p, const char token) {
     std::ranges::for_each(listeners_, [&](auto& hwnd) {PostMessage(hwnd, WM_SET_TOKEN, static_cast<WPARAM>(token), static_cast<LPARAM>(get_offset(p)));});
 }
 
-bool Game::is_valid_move(const Position& p) const {
+bool Game::is_valid_move(const Position& p, const char token) const {
     return std::ranges::any_of(DIRECTIONS, [&](const auto& dir) { return capture_count(p, dir) > 0; });
 }
 
-int Game::capture_count(const Position& p, const Position& dir) const {
+int Game::capture_count(const Position& p, const char token, const Position& dir) const {
     int count = 0;
     for (auto considered_position {p + dir}; considered_position.is_valid(size_); considered_position += dir) {
         const auto considered_token = get_token(considered_position);
         if (!considered_token) return 0;
-        if (considered_token == player_) {
+        if (considered_token == token) {
             std::cout << "Count is: " << count << " for direction: " << dir << std::endl;
             return count;
         }
