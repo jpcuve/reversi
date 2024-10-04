@@ -89,7 +89,7 @@ LRESULT BoardWindow::wnd_proc(UINT message, WPARAM word_param, LPARAM long_param
                 mouse_tracked_ = TrackMouseEvent(&event);
             }
             if (const auto mouse_position {convert_to_game({LOWORD(long_param), HIWORD(long_param)})}; mouse_position != mouse_position_) {
-                if (mouse_position_.is_valid(game_.size())) invalidate_position(mouse_position_);
+                if (game_.is_valid(mouse_position_)) invalidate_position(mouse_position_);
                 mouse_position_ = mouse_position;
                 invalidate_position(mouse_position_);
             }

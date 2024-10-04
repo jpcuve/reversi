@@ -44,7 +44,7 @@ bool Game::is_valid_move(const Position& p, const char token) const {
 
 int Game::capture_count(const Position& p, const char token, const Position& dir) const {
     int count = 0;
-    for (auto considered_position {p + dir}; considered_position.is_valid(size_); considered_position += dir) {
+    for (auto considered_position {p + dir}; is_valid(considered_position); considered_position += dir) {
         const auto considered_token = get_token(considered_position);
         if (!considered_token) return 0;
         if (considered_token == token) {

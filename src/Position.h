@@ -21,7 +21,7 @@ struct Position {
     Position& operator+=(const Position& p) {x += p.x; y += p.y; return *this;}
     bool operator==(const Position& p) const { return x == p.x && y == p.y;}
     bool operator!=(const Position& p) const { return x != p.x || y != p.y;}
-    [[nodiscard]] bool is_valid(const unsigned int size) const {return x >= 0 && y >= 0 && x < size && y < size;}
+    // [[nodiscard]] bool is_valid(const unsigned int size) const {return x >= 0 && y >= 0 && x < size && y < size;}
     [[nodiscard]] bool is_zero() const { return x == 0 && y == 0;}
     [[nodiscard]] bool is_negative() const { return x < 0 && y < 0;}
     friend std::ostream& operator<<(std::ostream& os, const Position& that);

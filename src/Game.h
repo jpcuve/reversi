@@ -16,7 +16,6 @@ class Game {
     int size_;
     std::string board_;
     std::unordered_set<HWND> listeners_;
-    [[nodiscard]] bool is_valid(const Position& p) const { return p.is_valid(size_);}
     char player_ {TOKEN_WHITE};
     std::string status_;
 public:
@@ -30,6 +29,7 @@ public:
     [[nodiscard]] char get_token(const Position& p) const { return board_[get_offset(p)];}
     void attach(HWND hwnd){ listeners_.insert(hwnd); }
     void detach(HWND hwnd){ listeners_.erase(hwnd); }
+    [[nodiscard]] bool is_valid(const Position& p) const { return p.x >= 0 && p.x < size_ && p.y >= 0 && p.y < size_; }
     [[nodiscard]] bool is_valid_move(const Position& p, char token) const;
     [[nodiscard]] bool is_valid_move(const Position& p) const { return is_valid_move(p, player_);}
     [[nodiscard]] int capture_count(const Position& p, char token, const Position& dir) const;
