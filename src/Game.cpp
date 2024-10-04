@@ -39,7 +39,7 @@ void Game::set_token(const Position& p, const char token) {
 }
 
 bool Game::is_valid_move(const Position& p, const char token) const {
-    return std::ranges::any_of(DIRECTIONS, [&](const auto& dir) { return capture_count(p, dir) > 0; });
+    return std::ranges::any_of(DIRECTIONS, [&](const auto& dir) { return capture_count(p, token, dir) > 0; });
 }
 
 int Game::capture_count(const Position& p, const char token, const Position& dir) const {
@@ -58,7 +58,9 @@ int Game::capture_count(const Position& p, const char token, const Position& dir
 
 std::string& Game::get_status() {
     std::stringstream ss;
-    ss << "Coucou";
+    ss << "w: " << std::ranges::count_if(board_, [&](const auto& token) { return token == TOKEN_WHITE; });
+    ss << ", b: " << std::ranges::count_if(board_, [&](const auto& token) { return token == TOKEN_BLACK; });
+    ss << ", " << (player_ == TOKEN_WHITE ? "white" : "black") << "'s turn";
     status_ = ss.str();
     return status_;
 }
