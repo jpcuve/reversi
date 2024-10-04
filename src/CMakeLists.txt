@@ -5,8 +5,8 @@ add_executable(reversi WIN32
         Position.h
         Position.cpp
         main.cpp
-        TestWindow.cpp
-        TestWindow.h
+        StatusWindow.cpp
+        StatusWindow.h
         MainWindow.cpp
         MainWindow.h
         BoardWindow.cpp

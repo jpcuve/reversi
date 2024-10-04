@@ -4,7 +4,7 @@
 #include "BoardWindow.h"
 #include "Game.h"
 #include "MainWindow.h"
-#include "TestWindow.h"
+#include "StatusWindow.h"
 #include "resource.h"
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
@@ -24,7 +24,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             nullptr,
             static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)),
             nullptr,
-            TestWindow::CLASS_NAME,
+            StatusWindow::CLASS_NAME,
             nullptr,
         },{
             sizeof(WNDCLASSEXW),

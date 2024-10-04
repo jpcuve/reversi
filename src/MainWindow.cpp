@@ -10,7 +10,7 @@
 
 #include "BoardWindow.h"
 #include "main.h"
-#include "TestWindow.h"
+#include "StatusWindow.h"
 
 MainWindow::MainWindow(HINSTANCE hinstance, Game& game): game_(game) {
     const SIZE screen_size {GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)};
@@ -31,7 +31,7 @@ MainWindow::MainWindow(HINSTANCE hinstance, Game& game): game_(game) {
     ThrowIfNull(handle_);
     SetWindowLongPtr(handle_, 0, reinterpret_cast<LONG_PTR>(this));
     board_window_ = std::make_unique<BoardWindow>(handle_, reinterpret_cast<HMENU>(ID_BOARD_WINDOW), game);
-    test_window_ = std::make_unique<TestWindow>(handle_, reinterpret_cast<HMENU>(ID_TEST_WINDOW));
+    test_window_ = std::make_unique<StatusWindow>(handle_, reinterpret_cast<HMENU>(ID_TEST_WINDOW));
 }
 
 LRESULT MainWindow::wnd_proc(const UINT message, const WPARAM word_param, const LPARAM long_param) {

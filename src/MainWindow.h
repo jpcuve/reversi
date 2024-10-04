@@ -10,12 +10,12 @@
 
 
 class BoardWindow;
-class TestWindow;
+class StatusWindow;
 
 class MainWindow final: public Window {
     Game& game_;
     std::unique_ptr<BoardWindow> board_window_;
-    std::unique_ptr<TestWindow> test_window_;
+    std::unique_ptr<StatusWindow> test_window_;
 public:
     static inline const auto CLASS_NAME = L"MainWindow";
     MainWindow(HINSTANCE hinstance, Game& game);

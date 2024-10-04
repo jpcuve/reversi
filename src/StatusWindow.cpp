@@ -2,11 +2,11 @@
 // Created by jpcuv on 27-12-23.
 //
 
-#include "TestWindow.h"
+#include "StatusWindow.h"
 
 #include "main.h"
 
-TestWindow::TestWindow(const HWND parent_handle, const HMENU identifier) {
+StatusWindow::StatusWindow(const HWND parent_handle, const HMENU identifier) {
     handle_ = CreateWindowW(
         CLASS_NAME,
         nullptr,
@@ -24,7 +24,7 @@ TestWindow::TestWindow(const HWND parent_handle, const HMENU identifier) {
     SetWindowLongPtr(handle_, 0, reinterpret_cast<LONG_PTR>(this));
 }
 
-LRESULT TestWindow::wnd_proc(const UINT message, const WPARAM word_param, const LPARAM long_param) {
+LRESULT StatusWindow::wnd_proc(const UINT message, const WPARAM word_param, const LPARAM long_param) {
     if (message == WM_PAINT) {
         PAINTSTRUCT ps;
         const auto hdc {BeginPaint(handle_, &ps)};

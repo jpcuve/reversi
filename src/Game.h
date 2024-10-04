@@ -18,6 +18,7 @@ class Game {
     std::unordered_set<HWND> listeners_;
     [[nodiscard]] bool is_valid(const Position& p) const { return p.is_valid(size_);}
     char player_ {TOKEN_WHITE};
+    std::string status_;
 public:
     explicit Game(int size = 8);
     void initialize();
@@ -31,6 +32,7 @@ public:
     void detach(HWND hwnd){ listeners_.erase(hwnd); }
     [[nodiscard]] bool is_valid_move(const Position& p) const;
     [[nodiscard]] int capture_count(const Position& p, const Position& dir) const;
+    [[nodiscard]] std::string& get_status();
     friend std::ostream& operator<<(std::ostream& os, const Game& that);
 };
 

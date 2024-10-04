@@ -6,6 +6,7 @@
 #include "Game.h"
 
 #include <algorithm>
+#include <sstream>
 
 #include "resource.h"
 
@@ -13,11 +14,8 @@ Game::Game(const int size): size_(size), board_(size * size, 0) {
 }
 
 void Game::initialize() {
-    for (int row {0}; row < size_; row++) for (int col {0}; col < size_; col++) set_token({col, row}, 0);
-    set_token({size_ / 2 - 1, size_ / 2 - 1}, TOKEN_WHITE);
-    set_token({size_ / 2, size_ / 2}, TOKEN_WHITE);
-    set_token({size_ / 2 - 1, size_ / 2}, TOKEN_BLACK);
-    set_token({size_ / 2, size_ / 2 - 1}, TOKEN_BLACK);
+    std::ranges::fill(board_, 0);
+    for (auto row {0}; row < 2; row++) for (auto col {0}; col < 2; col++) set_token({size_ / 2 - row, size_ / 2 - col}, (row+ col) % 2 ? TOKEN_BLACK : TOKEN_WHITE);
 }
 
 void Game::play(const Position& p) {
@@ -37,7 +35,7 @@ void Game::play(const Position& p) {
 
 void Game::set_token(const Position& p, const char token) {
     board_[get_offset(p)] = token;
-    for (const auto& hwnd: listeners_) PostMessage(hwnd, WM_SET_TOKEN, static_cast<WPARAM>(token), static_cast<LPARAM>(get_offset(p)));
+    std::ranges::for_each(listeners_, [&](auto& hwnd) {PostMessage(hwnd, WM_SET_TOKEN, static_cast<WPARAM>(token), static_cast<LPARAM>(get_offset(p)));});
 }
 
 bool Game::is_valid_move(const Position& p) const {
@@ -58,6 +56,13 @@ int Game::capture_count(const Position& p, const Position& dir) const {
     return 0;
 }
 
+std::string& Game::get_status() {
+    std::stringstream ss;
+    ss << "Coucou";
+    status_ = ss.str();
+    return status_;
+}
+
 std::ostream &operator<<(std::ostream &os, const Game& that) {
     const std::string horizontal (that.size_ * 2 + 1, '-');
     os << std::endl << '+' << horizontal << '+' << std::endl;
@@ -65,7 +70,7 @@ std::ostream &operator<<(std::ostream &os, const Game& that) {
         os << "| ";
         for (auto col {0}; col < that.size_; col++) {
             const auto token = that.get_token({col, row});
-            std::cout << (token == TOKEN_BLACK ? "X " : (token == TOKEN_WHITE ? "O " : ". "));
+            std::cout << (token == TOKEN_BLACK ? "X " : token == TOKEN_WHITE ? "O " : ". ");
         }
         os  << '|' << std::endl;
     }
