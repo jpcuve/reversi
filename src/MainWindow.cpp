@@ -13,8 +13,7 @@
 #include "StatusWindow.h"
 
 MainWindow::MainWindow(HINSTANCE hinstance, Game& game): game_(game) {
-    const SIZE screen_size {GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)};
-    const auto edge = min(screen_size.cx, screen_size.cy) / 2;
+    const auto edge {min(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) / 2};
     handle_ = CreateWindowW(
         CLASS_NAME,
         L"Reversi",
@@ -38,11 +37,12 @@ LRESULT MainWindow::wnd_proc(const UINT message, const WPARAM word_param, const 
     switch(message) {
         case WM_SIZE:
             {
-                const SIZE size {LOWORD(long_param), HIWORD(long_param)};
+                const auto cx {LOWORD(long_param)};
+                const auto cy {HIWORD(long_param)};
                 constexpr int ratio {20};
-                const auto e {min(size.cx, size.cy) * (ratio - 1) / ratio};
-                MoveWindow(board_window_->handle(), (size.cx - e) / 2, 0, e, e, true);
-                MoveWindow(test_window_->handle(), 0, size.cy * (ratio - 1) / ratio, size.cx, size.cy / ratio, true);
+                const auto e {min(cx, cy) * (ratio - 1) / ratio};
+                MoveWindow(board_window_->handle(), (cx - e) / 2, 0, e, e, true);
+                MoveWindow(test_window_->handle(), 0, cy * (ratio - 1) / ratio, cx, cy / ratio, true);
                 break;
             }
         case WM_KEYUP:
