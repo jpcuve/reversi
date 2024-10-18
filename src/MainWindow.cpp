@@ -36,18 +36,18 @@ MainWindow::MainWindow(HINSTANCE hinstance, Game& game): game_(game) {
 
 LRESULT MainWindow::wnd_proc(const UINT message, const WPARAM word_param, const LPARAM long_param) {
     switch(message) {
-        case WM_SIZE: {
-            const SIZE size {LOWORD(long_param), HIWORD(long_param)};
-            constexpr int ratio {20};
-            const auto e {min(size.cx, size.cy) * (ratio - 1) / ratio};
-            MoveWindow(board_window_->handle(), (size.cx - e) / 2, 0, e, e, true);
-            MoveWindow(test_window_->handle(), 0, size.cy * (ratio - 1) / ratio, size.cx, size.cy / ratio, true);
-            break;
-        }
-        case WM_KEYUP:{
+        case WM_SIZE:
+            {
+                const SIZE size {LOWORD(long_param), HIWORD(long_param)};
+                constexpr int ratio {20};
+                const auto e {min(size.cx, size.cy) * (ratio - 1) / ratio};
+                MoveWindow(board_window_->handle(), (size.cx - e) / 2, 0, e, e, true);
+                MoveWindow(test_window_->handle(), 0, size.cy * (ratio - 1) / ratio, size.cx, size.cy / ratio, true);
+                break;
+            }
+        case WM_KEYUP:
             if (word_param == VK_ESCAPE) DestroyWindow(handle_);
             break;
-        }
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
@@ -56,24 +56,24 @@ LRESULT MainWindow::wnd_proc(const UINT message, const WPARAM word_param, const 
                 case IDM_FILE_EXIT:
                     DestroyWindow(handle_);
                     break;
-                case IDM_FILE_TEST: {
+                case IDM_FILE_TEST:
                     test_window_->set_info("This seems to work");
                     break;
-                }
                 case IDM_FILE_NEW:
                     game_.initialize();
                 default:
                     break;
             }
             break;
-        case WM_DPICHANGED: {
-            const auto dpiX {LOWORD(word_param)};
-            const auto dpiY {HIWORD(word_param)};
-            std::cout << "Dpi (" << dpiX << ", " << dpiY << ")" << std::endl;
-            const auto size {reinterpret_cast<RECT*>(long_param)};
-            SetWindowPos(handle_, nullptr, size->left, size->top, size->right - size->left, size->bottom - size->top, 0);
-            break;
-        }
+        case WM_DPICHANGED:
+            {
+                const auto dpiX {LOWORD(word_param)};
+                const auto dpiY {HIWORD(word_param)};
+                std::cout << "Dpi (" << dpiX << ", " << dpiY << ")" << std::endl;
+                const auto window_size {reinterpret_cast<RECT*>(long_param)};
+                SetWindowPos(handle_, nullptr, window_size->left, window_size->top, window_size->right - window_size->left, window_size->bottom - window_size->top, 0);
+                break;
+            }
         default:
             break;
     }
